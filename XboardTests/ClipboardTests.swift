@@ -2,7 +2,7 @@ import Carbon.HIToolbox
 import AppKit
 import Security
 import XCTest
-@testable import OptionV
+@testable import Xboard
 
 final class ClipboardTests: XCTestCase {
     private var testCipher: LocalDataCipher {
@@ -62,7 +62,7 @@ final class ClipboardTests: XCTestCase {
     }
 
     func testNativeKeychainPersistsDeviceLocalEncryptionKey() throws {
-        let service = "io.github.timmyc07.OptionV.tests.\(UUID().uuidString)"
+        let service = "io.github.timmyc07.Xboard.tests.\(UUID().uuidString)"
         defer {
             SecItemDelete([
                 kSecClass as String: kSecClassGenericPassword,
@@ -864,7 +864,7 @@ final class ClipboardTests: XCTestCase {
         XCTAssertTrue(store.items.isEmpty)
     }
 
-    func testDefaultHotKeyIsOptionV() {
+    func testDefaultHotKeyUsesOptionAndV() {
         XCTAssertEqual(HotKeyConfiguration.default.keyCode, 9)
         XCTAssertEqual(HotKeyConfiguration.default.modifiers, UInt32(optionKey))
         XCTAssertEqual(HotKeyConfiguration.default.displayString, "⌥V")

@@ -1,12 +1,12 @@
 import SwiftUI
 
 @main
-struct OptionVApp: App {
+struct XboardApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var appState = AppState.shared
 
     var body: some Scene {
-        MenuBarExtra("OptionV", systemImage: "doc.on.clipboard") {
+        MenuBarExtra("Xboard", systemImage: "doc.on.clipboard") {
             Button {
                 appState.showPanel()
             } label: {
@@ -58,7 +58,7 @@ struct OptionVApp: App {
 
             Divider()
             Button(String(localized: "Settings…")) { appState.showSettings() }
-            Button(String(localized: "Quit OptionV")) { NSApp.terminate(nil) }
+            Button(String(localized: "Quit Xboard")) { NSApp.terminate(nil) }
         }
         .menuBarExtraStyle(.menu)
         .commands {

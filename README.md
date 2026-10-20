@@ -1,4 +1,4 @@
-# OptionV
+# Xboard
 
 免費、原生的 macOS 剪貼簿紀錄工具。按 **⌥V（Option + V）** 搜尋複製過的文字、圖片與檔案，選取後貼回原本的應用程式。
 
@@ -16,29 +16,29 @@
 
 ```sh
 ./scripts/build-app.sh
-open build/OptionV.app
+open build/Xboard.app
 ```
 
-或開啟 `OptionV.xcodeproj`，選擇 `OptionV` scheme 和 My Mac。
+或開啟 `Xboard.xcodeproj`，選擇 `Xboard` scheme 和 My Mac。
 
 1. 第一次啟動會打開設定；允許 macOS 提出的剪貼簿存取要求。
 2. 正常複製文字、圖片或檔案，再按 ⌥V。
 3. 輸入關鍵字搜尋，↑↓ 選取，Return 貼上，Esc 關閉。
-4. 在「系統設定 → 隱私權與安全性 → 輔助使用」啟用 OptionV，可自動貼回原 App。未授權時，選取會把內容放回剪貼簿；切回目標 App 按 ⌘V 即可。
+4. 點面板下方「啟用自動貼上」，在「系統設定 → 隱私權與安全性 → 輔助使用」啟用 Xboard，可自動貼回原 App。未授權時，選取會把內容放回剪貼簿；切回目標 App 按 ⌘V 即可。複製歷史不需要這項權限，因此能記錄但無法自動貼上時，請先檢查此處。
 5. ⌥V 會占用該組合原本的特殊字元輸入；若和輸入法衝突，可在設定更改快捷鍵。安全密碼欄位可能阻擋 Option 字元快捷鍵。
 
-`build/OptionV.app` 與 `build/OptionV.zip` 是本機 ad-hoc 簽署版本，沒有 Apple 公證。正式發佈需要 Developer ID 與公證；不需在程式碼或 `.env` 中放入憑證。每次更換本機建置後，macOS 可能要求重新授權輔助使用或鑰匙圈。鑰匙圈授權在背景處理，等待或拒絕授權時不會覆寫既有資料；新項目僅暫存在記憶體，可在設定重試。
+`build/Xboard.app` 與 `build/Xboard.zip` 是本機 ad-hoc 簽署版本，沒有 Apple 公證。正式發佈需要 Developer ID 與公證；不需在程式碼或 `.env` 中放入憑證。每次更換本機建置後，macOS 可能要求重新授權輔助使用或鑰匙圈。鑰匙圈授權在背景處理，等待或拒絕授權時不會覆寫既有資料；新項目僅暫存在記憶體，可在設定重試。
 
 ## 本機資料
 
-資料保存在 `~/Library/Application Support/OptionV/`，與上游 clipboard App 的資料分開。歷史與常用文字以 AES-GCM 加密，金鑰服務識別為 `io.github.timmyc07.OptionV.local-storage`，不透過 iCloud 同步。刪除鑰匙圈金鑰將無法解密現有紀錄。
+資料保存在 `~/Library/Application Support/Xboard/`，與上游 clipboard App 的資料分開。歷史與常用文字以 AES-GCM 加密，金鑰服務識別為 `io.github.timmyc07.Xboard.local-storage`，不透過 iCloud 同步。刪除鑰匙圈金鑰將無法解密現有紀錄。
 
 釘選不受筆數與期限清除影響。清空紀錄會刪除 App 的歷史，但不會刪除原始檔案或清空系統剪貼簿；檔案紀錄是參照，原始檔案移動或刪除後可能無法取用。所有設定都在 App 內，不需要 `.env`。
 
 ## 開發
 
 ```sh
-xcodebuild -project OptionV.xcodeproj -scheme OptionV -destination 'platform=macOS' -derivedDataPath build/DerivedData test
+xcodebuild -project Xboard.xcodeproj -scheme Xboard -destination 'platform=macOS' -derivedDataPath build/DerivedData test
 ```
 
 [開源與產品調查、技術決策](docs/research.md) · [技術實作](docs/implementation.md) · [驗證結果與待驗證項目](docs/validation.md)。上游歷史文件保存在 `docs-upstream/`，其中的產品名稱、上架狀態與路線圖屬於上游。

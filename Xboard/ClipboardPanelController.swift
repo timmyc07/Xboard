@@ -75,7 +75,8 @@ final class ClipboardPanelController {
         onExtractText: @escaping (ClipboardItem) -> Void,
         onSaveGIF: @escaping (ClipboardItem) -> Void,
         onSaveFavorite: @escaping (ClipboardItem) -> Void,
-        onDelete: @escaping (ClipboardItem) -> Void
+        onDelete: @escaping (ClipboardItem) -> Void,
+        onEnableAutomaticPaste: @escaping () -> Void
     ) {
         // Resolve the caret before creating or activating any clipboard UI so focus
         // still belongs to the app where the user intends to paste.
@@ -97,6 +98,7 @@ final class ClipboardPanelController {
                 onSaveGIF: onSaveGIF,
                 onSaveFavorite: onSaveFavorite,
                 onDelete: onDelete,
+                onEnableAutomaticPaste: onEnableAutomaticPaste,
                 onClose: { [weak self] in self?.close() }
             )
         )
@@ -500,6 +502,7 @@ struct ClipboardPanelView: View {
     let onSaveGIF: (ClipboardItem) -> Void
     let onSaveFavorite: (ClipboardItem) -> Void
     let onDelete: (ClipboardItem) -> Void
+    let onEnableAutomaticPaste: () -> Void
     let onClose: () -> Void
 
     @State private var selectedID: UUID?
@@ -525,7 +528,7 @@ struct ClipboardPanelView: View {
             HStack {
                 Image(systemName: "doc.on.clipboard.fill")
                     .foregroundStyle(.cyan)
-                Text("OptionV")
+                Text("Xboard")
                     .font(.headline)
                 Spacer()
                 Text(searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -614,9 +617,18 @@ struct ClipboardPanelView: View {
                 }
                 }
             }
-            Text(AXIsProcessTrusted()
-                 ? String(localized: "↑↓ Select · Return Paste · Esc Close")
-                 : String(localized: "Select an item, then press ⌘V in the destination app."))
+            HStack {
+                if AXIsProcessTrusted() {
+                    Text(String(localized: "↑↓ Select · Return Paste · Esc Close"))
+                } else {
+                    Text(String(localized: "Automatic paste needs Accessibility access."))
+                        .foregroundStyle(.orange)
+                    Spacer()
+                    Button(String(localized: "Enable automatic paste…"), action: onEnableAutomaticPaste)
+                        .buttonStyle(.link)
+                        .help(String(localized: "Select an item, then press ⌘V in the destination app."))
+                }
+            }
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)

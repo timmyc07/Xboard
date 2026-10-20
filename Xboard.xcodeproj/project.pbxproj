@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A10000000000000000000001 /* OptionVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* OptionVApp.swift */; };
+		A10000000000000000000001 /* XboardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* XboardApp.swift */; };
 		A10000000000000000000002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* AppState.swift */; };
 		A10000000000000000000003 /* ClipboardPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* ClipboardPanelController.swift */; };
 		A10000000000000000000004 /* ClipboardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* ClipboardStore.swift */; };
@@ -30,7 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A20000000000000000000001 /* OptionVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionVApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000001 /* XboardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XboardApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000002 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		A20000000000000000000003 /* ClipboardPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardPanelController.swift; sourceTree = "<group>"; };
 		A20000000000000000000004 /* ClipboardStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardStore.swift; sourceTree = "<group>"; };
@@ -40,9 +40,9 @@
 		A20000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A2000000000000000000000A /* ClipboardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTests.swift; sourceTree = "<group>"; };
-		A2000000000000000000000B /* OptionV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OptionV.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2000000000000000000000C /* OptionVTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptionVTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2000000000000000000000D /* OptionV.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OptionV.xcodeproj; path = OptionV.xcodeproj; sourceTree = "<group>"; };
+		A2000000000000000000000B /* Xboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Xboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000000000000000000000C /* XboardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XboardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000000000000000000000D /* Xboard.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Xboard.xcodeproj; path = Xboard.xcodeproj; sourceTree = "<group>"; };
 		A2000000000000000000000E /* SmartPaste.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartPaste.swift; sourceTree = "<group>"; };
 		A2000000000000000000000F /* ScreenshotCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotCapture.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* AnnotationEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationEditor.swift; sourceTree = "<group>"; };
@@ -76,16 +76,16 @@
 		A40000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
-				A40000000000000000000002 /* OptionV */,
-				A40000000000000000000003 /* OptionVTests */,
+				A40000000000000000000002 /* Xboard */,
+				A40000000000000000000003 /* XboardTests */,
 				A40000000000000000000004 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A40000000000000000000002 /* OptionV */ = {
+		A40000000000000000000002 /* Xboard */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000001 /* OptionVApp.swift */,
+				A20000000000000000000001 /* XboardApp.swift */,
 				A20000000000000000000002 /* AppState.swift */,
 				A20000000000000000000003 /* ClipboardPanelController.swift */,
 				A20000000000000000000004 /* ClipboardStore.swift */,
@@ -105,22 +105,22 @@
 				A20000000000000000000017 /* THIRD_PARTY_NOTICES.md */,
 				A20000000000000000000009 /* Assets.xcassets */,
 			);
-			path = OptionV;
+			path = Xboard;
 			sourceTree = "<group>";
 		};
-		A40000000000000000000003 /* OptionVTests */ = {
+		A40000000000000000000003 /* XboardTests */ = {
 			isa = PBXGroup;
 			children = (
 				A2000000000000000000000A /* ClipboardTests.swift */,
 			);
-			path = OptionVTests;
+			path = XboardTests;
 			sourceTree = "<group>";
 		};
 		A40000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A2000000000000000000000B /* OptionV.app */,
-				A2000000000000000000000C /* OptionVTests.xctest */,
+				A2000000000000000000000B /* Xboard.app */,
+				A2000000000000000000000C /* XboardTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,9 +128,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A50000000000000000000001 /* OptionV */ = {
+		A50000000000000000000001 /* Xboard */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A60000000000000000000001 /* Build configuration list for PBXNativeTarget "OptionV" */;
+			buildConfigurationList = A60000000000000000000001 /* Build configuration list for PBXNativeTarget "Xboard" */;
 			buildPhases = (
 				A30000000000000000000003 /* Sources */,
 				A30000000000000000000001 /* Frameworks */,
@@ -140,14 +140,14 @@
 			);
 			dependencies = (
 			);
-			name = OptionV;
-			productName = OptionV;
-			productReference = A2000000000000000000000B /* OptionV.app */;
+			name = Xboard;
+			productName = Xboard;
+			productReference = A2000000000000000000000B /* Xboard.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A50000000000000000000002 /* OptionVTests */ = {
+		A50000000000000000000002 /* XboardTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A60000000000000000000002 /* Build configuration list for PBXNativeTarget "OptionVTests" */;
+			buildConfigurationList = A60000000000000000000002 /* Build configuration list for PBXNativeTarget "XboardTests" */;
 			buildPhases = (
 				A30000000000000000000005 /* Sources */,
 				A30000000000000000000002 /* Frameworks */,
@@ -158,9 +158,9 @@
 			dependencies = (
 				A70000000000000000000001 /* PBXTargetDependency */,
 			);
-			name = OptionVTests;
-			productName = OptionVTests;
-			productReference = A2000000000000000000000C /* OptionVTests.xctest */;
+			name = XboardTests;
+			productName = XboardTests;
+			productReference = A2000000000000000000000C /* XboardTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -181,7 +181,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A60000000000000000000003 /* Build configuration list for PBXProject "OptionV" */;
+			buildConfigurationList = A60000000000000000000003 /* Build configuration list for PBXProject "Xboard" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -195,8 +195,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A50000000000000000000001 /* OptionV */,
-				A50000000000000000000002 /* OptionVTests */,
+				A50000000000000000000001 /* Xboard */,
+				A50000000000000000000002 /* XboardTests */,
 			);
 		};
 /* End PBXProject section */
@@ -230,7 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A10000000000000000000001 /* OptionVApp.swift in Sources */,
+				A10000000000000000000001 /* XboardApp.swift in Sources */,
 				A10000000000000000000002 /* AppState.swift in Sources */,
 				A10000000000000000000003 /* ClipboardPanelController.swift in Sources */,
 				A10000000000000000000004 /* ClipboardStore.swift in Sources */,
@@ -261,7 +261,7 @@
 /* Begin PBXTargetDependency section */
 		A70000000000000000000001 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A50000000000000000000001 /* OptionV */;
+			target = A50000000000000000000001 /* Xboard */;
 			targetProxy = A70000000000000000000002 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -272,7 +272,7 @@
 			containerPortal = A80000000000000000000001 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A50000000000000000000001;
-			remoteInfo = OptionV;
+			remoteInfo = Xboard;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -361,13 +361,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = OptionV;
+				INFOPLIST_KEY_CFBundleDisplayName = Xboard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.OptionV;
-				PRODUCT_NAME = OptionV;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.Xboard;
+				PRODUCT_NAME = Xboard;
 				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -379,13 +379,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = OptionV;
+				INFOPLIST_KEY_CFBundleDisplayName = Xboard;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.OptionV;
-				PRODUCT_NAME = OptionV;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.Xboard;
+				PRODUCT_NAME = Xboard;
 				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -397,11 +397,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.OptionVTests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.XboardTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OptionV.app/Contents/MacOS/OptionV";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Xboard.app/Contents/MacOS/Xboard";
 			};
 			name = Debug;
 		};
@@ -411,18 +411,18 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.OptionVTests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.timmyc07.XboardTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OptionV.app/Contents/MacOS/OptionV";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Xboard.app/Contents/MacOS/Xboard";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A60000000000000000000001 /* Build configuration list for PBXNativeTarget "OptionV" */ = {
+		A60000000000000000000001 /* Build configuration list for PBXNativeTarget "Xboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA0000000000000000000001 /* App Debug */,
@@ -431,7 +431,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A60000000000000000000002 /* Build configuration list for PBXNativeTarget "OptionVTests" */ = {
+		A60000000000000000000002 /* Build configuration list for PBXNativeTarget "XboardTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA0000000000000000000003 /* Tests Debug */,
@@ -440,7 +440,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A60000000000000000000003 /* Build configuration list for PBXProject "OptionV" */ = {
+		A60000000000000000000003 /* Build configuration list for PBXProject "Xboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A90000000000000000000001 /* Debug */,

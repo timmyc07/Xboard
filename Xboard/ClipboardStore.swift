@@ -22,7 +22,7 @@ final class ClipboardStore: ObservableObject {
         loadImmediately: Bool = true
     ) {
         let directory = directoryURL ?? fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("OptionV", isDirectory: true)
+            .appendingPathComponent("Xboard", isDirectory: true)
         historyURL = directory.appendingPathComponent("history.json")
         self.cipher = cipher
         self.limit = max(limit, 10)
@@ -251,7 +251,7 @@ final class SnippetStore: ObservableObject {
 
     init(directoryURL: URL? = nil, cipher: LocalDataCipher = .keychainBacked, loadImmediately: Bool = true) {
         let directory = directoryURL ?? fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("OptionV", isDirectory: true)
+            .appendingPathComponent("Xboard", isDirectory: true)
         snippetsURL = directory.appendingPathComponent("snippets.json")
         self.cipher = cipher
         canPersist = loadImmediately

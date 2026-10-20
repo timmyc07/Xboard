@@ -82,7 +82,7 @@ final class LocalDataKeychain {
     private var cachedKey: Data?
     private let lock = NSLock()
 
-    init(service: String = "io.github.timmyc07.OptionV.local-storage") {
+    init(service: String = "io.github.timmyc07.Xboard.local-storage") {
         self.service = service
     }
 

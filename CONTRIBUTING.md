@@ -1,4 +1,4 @@
-# Contributing to OptionV
+# Contributing to Xboard
 
 Use native Apple frameworks and keep all clipboard data local. Product settings belong in the app; no `.env` is required.
 

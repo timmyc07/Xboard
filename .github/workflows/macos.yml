@@ -2,7 +2,7 @@ name: macOS CI
 
 on:
   push:
-    branches: [main, feat/option-v]
+    branches: [main, feat/xboard]
   pull_request:
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
         run: xcodebuild -version
 
       - name: Run tests
-        run: xcodebuild -project OptionV.xcodeproj -scheme OptionV -destination 'platform=macOS' test
+        run: xcodebuild -project Xboard.xcodeproj -scheme Xboard -destination 'platform=macOS' test
 
       - name: Build
-        run: xcodebuild -project OptionV.xcodeproj -scheme OptionV -destination 'platform=macOS' build
+        run: xcodebuild -project Xboard.xcodeproj -scheme Xboard -destination 'platform=macOS' build

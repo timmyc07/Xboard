@@ -1,4 +1,4 @@
-# OptionV implementation
+# Xboard implementation
 
 ## Scope and sources
 
@@ -11,7 +11,7 @@
 
 Swift (Swift 5 language mode), SwiftUI, AppKit, Carbon global hotkey registration, CryptoKit AES-GCM, the local macOS login Keychain, LocalAuthentication, CoreGraphics synthetic paste, ServiceManagement login item, Vision OCR, XCTest. No third-party runtime package or backend.
 
-The product is OptionV (`io.github.timmyc07.OptionV`). Storage and Keychain identity are separate from the upstream app. The only active default global shortcut is Option-V. Optional capture and stack shortcuts must be configured by the user.
+The product is Xboard (`io.github.timmyc07.Xboard`). Storage and Keychain identity are separate from the upstream app. The only active default global shortcut is ⌥V. Optional capture and stack shortcuts must be configured by the user.
 
 ## Core flow
 
@@ -23,12 +23,12 @@ ClipboardPanelController remembers the destination before opening the picker. Se
 
 ## Settings and permissions
 
-All preferences are in the app. New installs open Settings. Clipboard read consent is handled by macOS. Accessibility is optional and opened only from the explicit Settings action. Screen Recording is requested only by optional capture/recording tools. Login at startup is opt-in.
+All preferences are in the app. New installs open Settings. Clipboard read consent is handled by macOS. Accessibility is optional: the picker displays an explicit enable action when access is missing, and Settings exposes the same action. Clicking it requests the macOS permission prompt and opens the Accessibility pane. The user grants access; capture and manual paste remain available without it. Screen Recording is requested only by optional capture/recording tools. Login at startup is opt-in.
 
 ## Acceptance checks
 
 - Compile and XCTest on the installed Xcode/macOS.
-- Default Option-V; no automatic global Command-G binding.
+- Default ⌥V; no automatic global Command-G binding.
 - More than three pins persist and survive a lowered limit and subsequent captures.
 - Encrypted reload, authentication/tamper failure, dedupe, search, images/files.
 - Traditional Chinese catalog compiled into the app.

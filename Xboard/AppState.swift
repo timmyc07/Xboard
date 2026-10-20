@@ -257,17 +257,17 @@ final class AppState: ObservableObject {
     private var oldStackNextHotKey: HotKeyConfiguration?
     private var recordingHotKeyTarget: HotKeyTarget?
     private enum Keys {
-        static let hotKey = "optionv.hotKey"
-        static let gifHotKey = "optionv.gifHotKey"
-        static let stackStartHotKey = "optionv.stackStartHotKey"
-        static let stackNextHotKey = "optionv.stackNextHotKey"
-        static let historyLimit = "optionv.historyLimit"
-        static let retention = "optionv.retention"
-        static let ignoredBundleIdentifiers = "optionv.ignoredBundleIdentifiers"
-        static let appearance = "optionv.appearance"
-        static let material = "optionv.material"
-        static let launchAtLogin = "optionv.launchAtLogin"
-        static let requireAuthenticationForPrivateViews = "optionv.requireAuthenticationForPrivateViews"
+        static let hotKey = "xboard.hotKey"
+        static let gifHotKey = "xboard.gifHotKey"
+        static let stackStartHotKey = "xboard.stackStartHotKey"
+        static let stackNextHotKey = "xboard.stackNextHotKey"
+        static let historyLimit = "xboard.historyLimit"
+        static let retention = "xboard.retention"
+        static let ignoredBundleIdentifiers = "xboard.ignoredBundleIdentifiers"
+        static let appearance = "xboard.appearance"
+        static let material = "xboard.material"
+        static let launchAtLogin = "xboard.launchAtLogin"
+        static let requireAuthenticationForPrivateViews = "xboard.requireAuthenticationForPrivateViews"
     }
 
     private init() {
@@ -336,8 +336,8 @@ final class AppState: ObservableObject {
         guard !hasStarted else { return }
         hasStarted = true
         retryStorageAccess()
-        if !UserDefaults.standard.bool(forKey: "optionv.hasOpenedSettings") {
-            UserDefaults.standard.set(true, forKey: "optionv.hasOpenedSettings")
+        if !UserDefaults.standard.bool(forKey: "xboard.hasOpenedSettings") {
+            UserDefaults.standard.set(true, forKey: "xboard.hasOpenedSettings")
             DispatchQueue.main.async { self.showSettings() }
         }
         refreshAvailableApplications()
@@ -433,7 +433,8 @@ final class AppState: ObservableObject {
             onExtractText: { [weak self] item in self?.extractText(item) },
             onSaveGIF: { [weak self] item in self?.saveGIF(item) },
             onSaveFavorite: { [weak self] item in self?.saveAsFavorite(item) },
-            onDelete: { [weak self] item in self?.deleteItem(item) }
+            onDelete: { [weak self] item in self?.deleteItem(item) },
+            onEnableAutomaticPaste: { [weak self] in self?.openAccessibilitySettings() }
         )
     }
 
@@ -559,7 +560,7 @@ final class AppState: ObservableObject {
             window.appearance = appearance.nsAppearance
             window.setContentSize(favoritesSize)
             window.minSize = NSSize(width: 420, height: 320)
-            window.title = String(localized: "Library — OptionV")
+            window.title = String(localized: "Library — Xboard")
             window.titlebarAppearsTransparent = false
             window.titleVisibility = .visible
             window.isOpaque = true
@@ -641,7 +642,7 @@ final class AppState: ObservableObject {
             window.appearance = appearance.nsAppearance
             window.setContentSize(settingsSize)
             window.minSize = settingsSize
-            window.title = String(localized: "Settings — OptionV")
+            window.title = String(localized: "Settings — Xboard")
             window.titlebarAppearsTransparent = false
             window.titleVisibility = .visible
             window.isOpaque = true
@@ -940,6 +941,9 @@ final class AppState: ObservableObject {
     }
 
     func openAccessibilitySettings() {
+        panelController.close()
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
         guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") else { return }
         NSWorkspace.shared.open(url)
     }

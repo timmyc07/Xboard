@@ -311,12 +311,12 @@
         }
       }
     },
-    "Start OptionV automatically after you sign in.": {
+    "Start Xboard automatically after you sign in.": {
       "localizations": {
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "登入後自動啟動 OptionV。"
+            "value": "登入後自動啟動 Xboard。"
           }
         }
       }
@@ -531,12 +531,12 @@
         }
       }
     },
-    "Allow clipboard access when macOS asks so OptionV can save your copied items.": {
+    "Allow clipboard access when macOS asks so Xboard can save your copied items.": {
       "localizations": {
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS 詢問時，請允許剪貼簿存取，以便 OptionV 儲存複製內容。"
+            "value": "macOS 詢問時，請允許剪貼簿存取，以便 Xboard 儲存複製內容。"
           }
         }
       }
@@ -681,12 +681,12 @@
         }
       }
     },
-    "Quit OptionV": {
+    "Quit Xboard": {
       "localizations": {
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "結束 OptionV"
+            "value": "結束 Xboard"
           }
         }
       }
@@ -911,12 +911,12 @@
         }
       }
     },
-    "Library — OptionV": {
+    "Library — Xboard": {
       "localizations": {
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "常用文字 — OptionV"
+            "value": "常用文字 — Xboard"
           }
         }
       }
@@ -971,12 +971,12 @@
         }
       }
     },
-    "Settings — OptionV": {
+    "Settings — Xboard": {
       "localizations": {
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "設定 — OptionV"
+            "value": "設定 — Xboard"
           }
         }
       }
@@ -2347,6 +2347,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "未取得鑰匙圈存取權。既有資料已保留，新項目僅暫存在記憶體。"
+          }
+        }
+      }
+    },
+    "Automatic paste needs Accessibility access.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動貼上尚未取得授權。"
+          }
+        }
+      }
+    },
+    "Enable automatic paste…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "啟用自動貼上…"
           }
         }
       }

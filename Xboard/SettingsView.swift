@@ -40,7 +40,7 @@ struct SettingsView: View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 22) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("OptionV")
+                    Text("Xboard")
                         .font(.title2.bold())
                     Text(String(localized: "Your clipboard history, free and stored only on this Mac."))
                     Text(String(localized: "Press \(appState.hotKey.displayString) to search copied text, images, and files."))
@@ -48,7 +48,7 @@ struct SettingsView: View {
                     Text(String(localized: "Select an item to paste. Without Accessibility permission, select it and press ⌘V in the destination app."))
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(String(localized: "Allow clipboard access when macOS asks so OptionV can save your copied items."))
+                    Text(String(localized: "Allow clipboard access when macOS asks so Xboard can save your copied items."))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -283,7 +283,7 @@ struct SettingsView: View {
                     settingsCard {
                         VStack(alignment: .leading, spacing: 8) {
                             Toggle(String(localized: "Launch at login"), isOn: $appState.launchAtLogin)
-                            Text(String(localized: "Start OptionV automatically after you sign in."))
+                            Text(String(localized: "Start Xboard automatically after you sign in."))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }

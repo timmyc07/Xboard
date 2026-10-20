@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: GitHub Discussions
-    url: https://github.com/timmyc07/OptionV/discussions
+    url: https://github.com/timmyc07/Xboard/discussions
     about: Ask questions, share product feedback, or discuss an idea before opening an issue.
   - name: Security report
-    url: https://github.com/timmyc07/OptionV/security/advisories/new
+    url: https://github.com/timmyc07/Xboard/security/advisories/new
     about: Report a security issue privately instead of posting sensitive details publicly.
