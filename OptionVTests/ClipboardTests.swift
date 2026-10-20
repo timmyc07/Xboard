@@ -1,11 +1,153 @@
 import Carbon.HIToolbox
 import AppKit
+import Security
 import XCTest
-@testable import clipboard
+@testable import OptionV
 
 final class ClipboardTests: XCTestCase {
     private var testCipher: LocalDataCipher {
         LocalDataCipher { Data(repeating: 0xA5, count: 32) }
+    }
+
+    @MainActor
+    func testDeferredHistoryLoadMergesMemoryAndPreservesSavedPins() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let saved = ClipboardStore(directoryURL: directory, cipher: testCipher)
+        let snapshot = ClipboardSnapshot(text: "saved pin", richTextData: nil, imageData: nil, imageType: nil, fileURLs: [])
+        saved.ingest(snapshot)
+        XCTAssertTrue(saved.setPinned(try XCTUnwrap(saved.items.first?.id), pinned: true))
+        let historyURL = directory.appendingPathComponent("history.json")
+        let originalBytes = try Data(contentsOf: historyURL)
+
+        var keyAvailable = false
+        let cipher = LocalDataCipher {
+            guard keyAvailable else { throw LocalDataCipherError.keychain(errSecInteractionNotAllowed) }
+            return Data(repeating: 0xA5, count: 32)
+        }
+        let store = ClipboardStore(directoryURL: directory, cipher: cipher, loadImmediately: false)
+        store.ingest(snapshot)
+        store.ingest(ClipboardSnapshot(text: "new memory item", richTextData: nil, imageData: nil, imageType: nil, fileURLs: []))
+        store.load()
+        XCTAssertNotNil(store.persistenceErrorMessage)
+        XCTAssertEqual(store.items.count, 2)
+        XCTAssertEqual(try Data(contentsOf: historyURL), originalBytes)
+
+        keyAvailable = true
+        store.load()
+        XCTAssertNil(store.persistenceErrorMessage)
+        XCTAssertTrue(store.items.first(where: { $0.text == "saved pin" })?.isPinned == true)
+        XCTAssertEqual(ClipboardStore(directoryURL: directory, cipher: testCipher).items.count, 2)
+
+        keyAvailable = false
+        XCTAssertTrue(store.remove(try XCTUnwrap(store.items.first(where: { $0.text == "saved pin" })?.id)))
+        XCTAssertNotNil(store.persistenceErrorMessage)
+        keyAvailable = true
+        store.load()
+        XCTAssertEqual(ClipboardStore(directoryURL: directory, cipher: testCipher).items.map(\.text), ["new memory item"])
+    }
+
+    @MainActor
+    func testDeferredLibraryLoadPreservesPendingEntries() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let saved = SnippetStore(directoryURL: directory, cipher: testCipher)
+        saved.add(text: "saved text")
+        let store = SnippetStore(directoryURL: directory, cipher: testCipher, loadImmediately: false)
+        store.add(text: "new text")
+        store.load()
+        XCTAssertEqual(Set(store.snippets.map(\.text)), ["saved text", "new text"])
+        let reloaded = SnippetStore(directoryURL: directory, cipher: testCipher)
+        XCTAssertEqual(Set(reloaded.snippets.map(\.text)), ["saved text", "new text"])
+    }
+
+    func testNativeKeychainPersistsDeviceLocalEncryptionKey() throws {
+        let service = "io.github.timmyc07.OptionV.tests.\(UUID().uuidString)"
+        defer {
+            SecItemDelete([
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrService as String: service,
+                kSecUseDataProtectionKeychain as String: false
+            ] as CFDictionary)
+        }
+        let key = try LocalDataKeychain(service: service).keyData()
+        XCTAssertEqual(key.count, 32)
+        XCTAssertEqual(try LocalDataKeychain(service: service).keyData(), key)
+    }
+
+    @MainActor
+    func testPinsSurviveLimitsNewCapturesAndReload() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = ClipboardStore(directoryURL: directory, limit: 50, cipher: testCipher)
+        var pinnedIDs = Set<UUID>()
+        for index in 0..<16 {
+            store.ingest(ClipboardSnapshot(text: "pin-\(index)", richTextData: nil, imageData: nil, imageType: nil, fileURLs: []))
+            let item = try XCTUnwrap(store.items.first(where: { $0.text == "pin-\(index)" }))
+            XCTAssertTrue(store.setPinned(item.id, pinned: true))
+            pinnedIDs.insert(item.id)
+        }
+        for index in 0..<25 {
+            store.ingest(ClipboardSnapshot(text: "recent-\(index)", richTextData: nil, imageData: nil, imageType: nil, fileURLs: []))
+        }
+        store.setLimit(10)
+        store.ingest(ClipboardSnapshot(text: "newest", richTextData: nil, imageData: nil, imageType: nil, fileURLs: []))
+        let reloaded = ClipboardStore(directoryURL: directory, limit: 10, cipher: testCipher)
+        XCTAssertEqual(Set(reloaded.items.filter(\.isPinned).map(\.id)), pinnedIDs)
+        XCTAssertEqual(reloaded.items.filter { !$0.isPinned }.count, 10)
+        XCTAssertEqual(reloaded.items.first(where: { !$0.isPinned })?.text, "newest")
+        XCTAssertEqual(reloaded.items.count, 26)
+    }
+
+    @MainActor
+    func testHistoryBeyondTwoHundredItemsPersists() {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = ClipboardStore(directoryURL: directory, limit: 300, cipher: testCipher)
+        for index in 0..<205 {
+            store.ingest(ClipboardSnapshot(text: "item-\(index)", richTextData: nil, imageData: nil, imageType: nil, fileURLs: []))
+        }
+        let reloaded = ClipboardStore(directoryURL: directory, limit: 300, cipher: testCipher)
+        XCTAssertEqual(reloaded.items.count, 205)
+        XCTAssertEqual(reloaded.items.first?.text, "item-204")
+    }
+
+    @MainActor
+    func testRecopyKeepsPinnedItemIdentity() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = ClipboardStore(directoryURL: directory, cipher: testCipher)
+        let snapshot = ClipboardSnapshot(text: "pinned", richTextData: nil, imageData: nil, imageType: nil, fileURLs: [])
+        store.ingest(snapshot)
+        let id = try XCTUnwrap(store.items.first?.id)
+        XCTAssertTrue(store.setPinned(id, pinned: true))
+        store.ingest(snapshot)
+        XCTAssertEqual(store.items.count, 1)
+        XCTAssertEqual(store.items.first?.id, id)
+        XCTAssertTrue(store.items.first?.isPinned == true)
+    }
+
+    @MainActor
+    func testConcealedTransientAndGeneratedCopiesAreNeverCaptured() {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let monitor = PasteboardMonitor()
+        for marker in ["ConcealedType", "TransientType", "AutoGeneratedType"] {
+            pasteboard.clearContents()
+            pasteboard.setString("synthetic secret", forType: .string)
+            pasteboard.setData(Data(), forType: NSPasteboard.PasteboardType("org.nspasteboard.\(marker)"))
+            XCTAssertNil(monitor.makeSnapshot(from: pasteboard))
+        }
+        pasteboard.clearContents()
+        pasteboard.setString("ordinary note", forType: .string)
+        XCTAssertEqual(monitor.makeSnapshot(from: pasteboard)?.text, "ordinary note")
+    }
+
+    func testTraditionalChineseResourcesAreBundled() throws {
+        let resourcePath = try XCTUnwrap(Bundle.main.path(forResource: "zh-Hant", ofType: "lproj"))
+        let bundle = try XCTUnwrap(Bundle(path: resourcePath))
+        XCTAssertEqual(bundle.localizedString(forKey: "Open history", value: nil, table: nil), "開啟剪貼簿紀錄")
+        XCTAssertEqual(bundle.localizedString(forKey: "No matches", value: nil, table: nil), "沒有符合的項目")
     }
 
     func testSnapshotFingerprintIsStable() {
@@ -206,7 +348,7 @@ final class ClipboardTests: XCTestCase {
     }
 
     @MainActor
-    func testStorePinsMaximumThreeItemsAndPersistsOrder() {
+    func testStorePinsAllItemsAndPersistsOrder() {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let store = ClipboardStore(directoryURL: directory, cipher: testCipher)
 
@@ -218,13 +360,13 @@ final class ClipboardTests: XCTestCase {
         XCTAssertTrue(store.setPinned(candidates[0], pinned: true))
         XCTAssertTrue(store.setPinned(candidates[1], pinned: true))
         XCTAssertTrue(store.setPinned(candidates[2], pinned: true))
-        XCTAssertFalse(store.setPinned(candidates[3], pinned: true))
-        XCTAssertEqual(store.items.filter(\.isPinned).count, 3)
-        XCTAssertTrue(store.items.prefix(3).allSatisfy(\.isPinned))
+        XCTAssertTrue(store.setPinned(candidates[3], pinned: true))
+        XCTAssertEqual(store.items.filter(\.isPinned).count, 4)
+        XCTAssertTrue(store.items.prefix(4).allSatisfy(\.isPinned))
 
         let reloaded = ClipboardStore(directoryURL: directory, cipher: testCipher)
-        XCTAssertEqual(reloaded.items.filter(\.isPinned).count, 3)
-        XCTAssertTrue(reloaded.items.prefix(3).allSatisfy(\.isPinned))
+        XCTAssertEqual(reloaded.items.filter(\.isPinned).count, 4)
+        XCTAssertTrue(reloaded.items.prefix(4).allSatisfy(\.isPinned))
     }
 
     func testLegacyItemDecodesWithoutPinnedFlag() throws {
@@ -263,7 +405,7 @@ final class ClipboardTests: XCTestCase {
         XCTAssertNil(decoded.sourceApplication)
     }
 
-    func testContentLabelsUseEnglishCopy() {
+    func testContentLabelsUseLocalizedCopy() {
         let textItem = ClipboardItem(
             fingerprint: "text",
             text: "hello",
@@ -281,9 +423,9 @@ final class ClipboardTests: XCTestCase {
             files: []
         )
 
-        XCTAssertEqual(textItem.kindLabel, "Text")
-        XCTAssertEqual(imageItem.kindLabel, "Image")
-        XCTAssertEqual(imageItem.preview, "Copied image")
+        XCTAssertEqual(textItem.kindLabel, String(localized: "Text"))
+        XCTAssertEqual(imageItem.kindLabel, String(localized: "Image"))
+        XCTAssertEqual(imageItem.preview, String(localized: "Copied image"))
     }
 
     func testTextExtractionIsAvailableOnlyForStaticImages() {
@@ -529,8 +671,8 @@ final class ClipboardTests: XCTestCase {
         XCTAssertEqual(ClipboardRetention.allCases, [.never, .oneDay, .sevenDays, .thirtyDays])
         XCTAssertNil(ClipboardRetention.never.interval)
         XCTAssertEqual(ClipboardRetention.oneDay.interval, 24 * 60 * 60)
-        XCTAssertEqual(ClipboardRetention.sevenDays.title, "7 days")
-        XCTAssertEqual(ClipboardRetention.thirtyDays.title, "30 days")
+        XCTAssertEqual(ClipboardRetention.sevenDays.title, String(localized: "7 days"))
+        XCTAssertEqual(ClipboardRetention.thirtyDays.title, String(localized: "30 days"))
     }
 
     @MainActor
@@ -590,8 +732,8 @@ final class ClipboardTests: XCTestCase {
 
     func testMaterialOptionsIncludeLiquidGlassAndStandard() {
         XCTAssertEqual(ClipboardMaterial.allCases, [.liquidGlass, .standard])
-        XCTAssertEqual(ClipboardMaterial.liquidGlass.title, "Liquid Glass")
-        XCTAssertEqual(ClipboardMaterial.standard.title, "Standard")
+        XCTAssertEqual(ClipboardMaterial.liquidGlass.title, String(localized: "Liquid Glass"))
+        XCTAssertEqual(ClipboardMaterial.standard.title, String(localized: "Standard"))
     }
 
     func testSmartPastePlainTextDropsRichContent() throws {
@@ -681,7 +823,7 @@ final class ClipboardTests: XCTestCase {
         let item = try XCTUnwrap(store.items.first)
         XCTAssertTrue(item.isGIF)
         XCTAssertEqual(item.kindLabel, "GIF")
-        XCTAssertEqual(item.preview, "Copied GIF")
+        XCTAssertEqual(item.preview, String(localized: "Copied GIF"))
 
         let payload = try XCTUnwrap(ClipboardPasteFormatter.payload(for: item, format: .original))
         XCTAssertEqual(payload.imageData, gifData)
@@ -722,17 +864,10 @@ final class ClipboardTests: XCTestCase {
         XCTAssertTrue(store.items.isEmpty)
     }
 
-    func testDefaultHotKeyIsCommandShiftV() {
+    func testDefaultHotKeyIsOptionV() {
         XCTAssertEqual(HotKeyConfiguration.default.keyCode, 9)
-        XCTAssertTrue(HotKeyConfiguration.default.displayString.contains("⌘"))
-        XCTAssertTrue(HotKeyConfiguration.default.displayString.contains("⇧"))
-        XCTAssertTrue(HotKeyConfiguration.default.displayString.contains("V"))
-    }
-
-    func testDefaultGIFHotKeyIsCommandG() {
-        XCTAssertEqual(HotKeyConfiguration.gifDefault.keyCode, 5)
-        XCTAssertEqual(HotKeyConfiguration.gifDefault.modifiers, UInt32(cmdKey))
-        XCTAssertEqual(HotKeyConfiguration.gifDefault.displayString, "⌘G")
+        XCTAssertEqual(HotKeyConfiguration.default.modifiers, UInt32(optionKey))
+        XCTAssertEqual(HotKeyConfiguration.default.displayString, "⌥V")
     }
 
     func testAnnotationToolsKeepTheMVPSet() {

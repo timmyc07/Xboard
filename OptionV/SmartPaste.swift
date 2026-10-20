@@ -12,11 +12,11 @@ enum ClipboardPasteFormat: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .original: return "Original"
-        case .plainText: return "Plain Text"
-        case .markdown: return "Clean Markdown"
-        case .prettyJSON: return "Format JSON"
-        case .markdownLink: return "Markdown Link"
+        case .original: return String(localized: "Original")
+        case .plainText: return String(localized: "Plain Text")
+        case .markdown: return String(localized: "Clean Markdown")
+        case .prettyJSON: return String(localized: "Format JSON")
+        case .markdownLink: return String(localized: "Markdown Link")
         }
     }
 

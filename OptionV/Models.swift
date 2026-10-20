@@ -41,12 +41,12 @@ enum ClipboardHistoryTypeFilter: String, CaseIterable, Hashable, Identifiable {
 
     var title: String {
         switch self {
-        case .all: return "All types"
-        case .text: return "Text"
-        case .image: return "Images"
+        case .all: return String(localized: "All types")
+        case .text: return String(localized: "Text")
+        case .image: return String(localized: "Images")
         case .gif: return "GIFs"
-        case .files: return "Files"
-        case .mixed: return "Mixed"
+        case .files: return String(localized: "Files")
+        case .mixed: return String(localized: "Mixed")
         }
     }
 
@@ -72,10 +72,10 @@ enum ClipboardHistoryDateFilter: String, CaseIterable, Hashable, Identifiable {
 
     var title: String {
         switch self {
-        case .allTime: return "All time"
-        case .today: return "Today"
-        case .lastSevenDays: return "Last 7 days"
-        case .lastThirtyDays: return "Last 30 days"
+        case .allTime: return String(localized: "All time")
+        case .today: return String(localized: "Today")
+        case .lastSevenDays: return String(localized: "Last 7 days")
+        case .lastThirtyDays: return String(localized: "Last 30 days")
         }
     }
 
@@ -121,10 +121,10 @@ enum ClipboardRetention: String, CaseIterable, Codable, Hashable, Identifiable {
 
     var title: String {
         switch self {
-        case .never: return "Never"
-        case .oneDay: return "1 day"
-        case .sevenDays: return "7 days"
-        case .thirtyDays: return "30 days"
+        case .never: return String(localized: "Never")
+        case .oneDay: return String(localized: "1 day")
+        case .sevenDays: return String(localized: "7 days")
+        case .thirtyDays: return String(localized: "30 days")
         }
     }
 
@@ -147,9 +147,9 @@ enum ClipboardPauseDuration: String, CaseIterable, Hashable, Identifiable {
 
     var title: String {
         switch self {
-        case .fifteenMinutes: return "15 minutes"
-        case .oneHour: return "1 hour"
-        case .untilResumed: return "Until resumed"
+        case .fifteenMinutes: return String(localized: "15 minutes")
+        case .oneHour: return String(localized: "1 hour")
+        case .untilResumed: return String(localized: "Until resumed")
         }
     }
 
@@ -245,10 +245,10 @@ struct ClipboardItem: Codable, Equatable, Identifiable {
 
     var kindLabel: String {
         switch kind {
-        case .text: return "Text"
-        case .image: return isGIF ? "GIF" : "Image"
-        case .files: return files.count == 1 ? "File" : "Files"
-        case .mixed: return "Mixed content"
+        case .text: return String(localized: "Text")
+        case .image: return isGIF ? "GIF" : String(localized: "Image")
+        case .files: return files.count == 1 ? String(localized: "File") : String(localized: "Files")
+        case .mixed: return String(localized: "Mixed content")
         }
     }
 
@@ -257,8 +257,8 @@ struct ClipboardItem: Codable, Equatable, Identifiable {
             return text.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         if hasFiles { return files.map(\.name).joined(separator: ", ") }
-        if hasImage { return isGIF ? "Copied GIF" : "Copied image" }
-        return "Copied content"
+        if hasImage { return isGIF ? String(localized: "Copied GIF") : String(localized: "Copied image") }
+        return String(localized: "Copied content")
     }
 
     /// Search-only projection. It is intentionally not persisted so filtering
@@ -478,8 +478,7 @@ struct HotKeyConfiguration: Codable, Equatable {
     var keyCode: UInt32
     var modifiers: UInt32
 
-    static let `default` = HotKeyConfiguration(keyCode: 9, modifiers: UInt32(cmdKey | shiftKey))
-    static let gifDefault = HotKeyConfiguration(keyCode: 5, modifiers: UInt32(cmdKey))
+    static let `default` = HotKeyConfiguration(keyCode: 9, modifiers: UInt32(optionKey))
 
     var displayString: String {
         var value = ""
@@ -499,7 +498,7 @@ struct HotKeyConfiguration: Codable, Equatable {
             25: "9", 26: "7", 28: "8", 29: "0", 36: "↩", 48: "⇥", 49: "Space", 51: "⌫",
             53: "Esc", 115: "Home", 119: "End", 116: "Page Up", 121: "Page Down"
         ]
-        return names[keyCode] ?? "Key (keyCode)"
+        return names[keyCode] ?? "Key \(keyCode)"
     }
 
     static func modifiers(from flags: NSEvent.ModifierFlags) -> UInt32 {

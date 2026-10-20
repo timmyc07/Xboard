@@ -17,11 +17,13 @@ final class PasteboardMonitor {
 
     func start() {
         guard timer == nil else { return }
-        timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 self?.poll()
             }
         }
+        self.timer = timer
+        RunLoop.main.add(timer, forMode: .common)
     }
 
     func stop() {
@@ -72,6 +74,7 @@ final class PasteboardMonitor {
         let sourceApplication = sourceApplication(for: NSWorkspace.shared.frontmostApplication)
         guard !shouldIgnore(bundleIdentifier: sourceApplication?.bundleIdentifier) else { return }
         guard let snapshot = makeSnapshot(from: pasteboard) else { return }
+        guard pasteboard.changeCount == changeCount else { return }
         guard !consumeIgnoreNextCopy() else { return }
         onSnapshot?(snapshot, sourceApplication)
     }
@@ -81,7 +84,7 @@ final class PasteboardMonitor {
         resumeHistory()
     }
 
-    private func makeSnapshot(from pasteboard: NSPasteboard) -> ClipboardSnapshot? {
+    func makeSnapshot(from pasteboard: NSPasteboard) -> ClipboardSnapshot? {
         let blockedTypes = [
             NSPasteboard.PasteboardType("org.nspasteboard.ConcealedType"),
             NSPasteboard.PasteboardType("org.nspasteboard.TransientType"),

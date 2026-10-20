@@ -225,13 +225,13 @@ struct AnnotationEditorView: View {
             }
             Divider()
             HStack {
-                Text("Draw on the capture, then copy the finished image.")
+                Text(String(localized: "Draw on the capture, then copy the finished image."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer()
-                Button("Cancel", action: onCancel)
+                Button(String(localized: "Cancel"), action: onCancel)
                     .keyboardShortcut(.cancelAction)
-                Button("Copy to Clipboard") {
+                Button(String(localized: "Copy to Clipboard")) {
                     if let data = document.renderedPNGData() {
                         onCopy(data)
                     }
@@ -262,7 +262,7 @@ struct AnnotationEditorView: View {
                 document.undo()
             }
             .disabled(document.marks.isEmpty)
-            Button("Clear", systemImage: "trash") {
+            Button(String(localized: "Clear"), systemImage: "trash") {
                 document.clear()
             }
             .disabled(document.marks.isEmpty)
@@ -350,7 +350,7 @@ final class AnnotationEditorController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "Annotate Screenshot"
+        window.title = String(localized: "Annotate Screenshot")
         window.minSize = NSSize(width: 680, height: 520)
         window.isReleasedWhenClosed = false
         window.isOpaque = false

@@ -3,8 +3,6 @@ import UniformTypeIdentifiers
 
 @MainActor
 final class ClipboardStore: ObservableObject {
-    static let maximumPinnedItems = 3
-
     @Published private(set) var items: [ClipboardItem] = []
     @Published private(set) var persistenceErrorMessage: String?
 
@@ -12,31 +10,30 @@ final class ClipboardStore: ObservableObject {
     private let historyURL: URL
     private let cipher: LocalDataCipher
     private var canPersist = true
+    private var hasLoaded = false
     private(set) var limit: Int
     private(set) var retention: ClipboardRetention
 
     init(
         directoryURL: URL? = nil,
-        limit: Int = 50,
+        limit: Int = 200,
         retention: ClipboardRetention = .never,
-        cipher: LocalDataCipher = .keychainBacked
+        cipher: LocalDataCipher = .keychainBacked,
+        loadImmediately: Bool = true
     ) {
         let directory = directoryURL ?? fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("clipboard", isDirectory: true)
+            .appendingPathComponent("OptionV", isDirectory: true)
         historyURL = directory.appendingPathComponent("history.json")
         self.cipher = cipher
-        self.limit = min(max(limit, 10), 200)
+        self.limit = max(limit, 10)
         self.retention = retention
-        load()
+        canPersist = loadImmediately
+        if loadImmediately { load() }
     }
 
     func setLimit(_ value: Int) {
-        limit = min(max(value, 10), 200)
-        if items.count > limit {
-            sortItems()
-            items = Array(items.prefix(limit))
-            save()
-        }
+        limit = max(value, 10)
+        if trimToLimit() { save() }
     }
 
     func setRetention(_ value: ClipboardRetention, now: Date = Date()) {
@@ -49,12 +46,9 @@ final class ClipboardStore: ObservableObject {
     @discardableResult
     func setPinned(_ id: UUID, pinned: Bool) -> Bool {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return false }
-        if pinned && !items[index].isPinned {
-            guard items.filter(\.isPinned).count < Self.maximumPinnedItems else { return false }
-        }
-
         items[index].isPinned = pinned
         sortItems()
+        _ = trimToLimit()
         save()
         return true
     }
@@ -90,12 +84,14 @@ final class ClipboardStore: ObservableObject {
         let existingItem = items.first(where: { $0.fingerprint == snapshot.fingerprint })
         let wasPinned = existingItem?.isPinned ?? false
         let item = ClipboardItem(
+            id: existingItem?.id ?? UUID(),
             createdAt: now,
             fingerprint: snapshot.fingerprint,
             text: snapshot.text,
             richTextData: snapshot.richTextData,
             imageData: snapshot.imageData,
             imageType: snapshot.imageType,
+            ocrText: existingItem?.ocrText,
             files: fileReferences,
             isPinned: wasPinned,
             sourceApplication: sourceApplication ?? existingItem?.sourceApplication
@@ -106,7 +102,7 @@ final class ClipboardStore: ObservableObject {
         items.insert(item, at: 0)
         _ = pruneExpired(now: now, persist: false)
         sortItems()
-        items = Array(items.prefix(limit))
+        _ = trimToLimit()
         save()
         scheduleOCRIfNeeded(for: item)
     }
@@ -139,21 +135,45 @@ final class ClipboardStore: ObservableObject {
         return StoredFileReference(url: url, bookmarkData: bookmark)
     }
 
-    private func load() {
-        guard fileManager.fileExists(atPath: historyURL.path) else { return }
+    func suspendPersistence(message: String) {
+        canPersist = false
+        persistenceErrorMessage = message
+    }
+
+    func load() {
+        canPersist = true
+        persistenceErrorMessage = nil
+        if hasLoaded {
+            save()
+            return
+        }
+        guard fileManager.fileExists(atPath: historyURL.path) else {
+            hasLoaded = true
+            if !items.isEmpty { save() }
+            return
+        }
         do {
             let storedData = try Data(contentsOf: historyURL)
             let openedData = try cipher.open(storedData, purpose: "clipboard-history")
-            items = Array(try JSONDecoder.clipboardDecoder.decode([ClipboardItem].self, from: openedData.plaintext).prefix(limit))
-            normalizePinnedItems()
+            let storedItems = try JSONDecoder.clipboardDecoder.decode([ClipboardItem].self, from: openedData.plaintext)
+            let pendingFingerprints = Set(items.map(\.fingerprint))
+            let hadPendingItems = !items.isEmpty
+            for index in items.indices {
+                if let stored = storedItems.first(where: { $0.fingerprint == items[index].fingerprint }),
+                   stored.id != items[index].id {
+                    items[index].isPinned = items[index].isPinned || stored.isPinned
+                }
+            }
+            items += storedItems.filter { !pendingFingerprints.contains($0.fingerprint) }
+            hasLoaded = true
             let removedCount = pruneExpired(now: Date(), persist: false)
             sortItems()
-            if removedCount > 0 || !openedData.wasEncrypted { save() }
+            let trimmed = trimToLimit()
+            if hadPendingItems || removedCount > 0 || trimmed || !openedData.wasEncrypted { save() }
             items.forEach { scheduleOCRIfNeeded(for: $0) }
         } catch {
-            items = []
             canPersist = false
-            persistenceErrorMessage = "Encrypted history could not be opened. Existing data was preserved."
+            persistenceErrorMessage = String(localized: "Encrypted history could not be opened. Existing data was preserved.")
         }
     }
 
@@ -183,21 +203,23 @@ final class ClipboardStore: ObservableObject {
         return removedCount
     }
 
-    private func normalizePinnedItems() {
-        var pinnedCount = 0
-        for index in items.indices where items[index].isPinned {
-            if pinnedCount < Self.maximumPinnedItems {
-                pinnedCount += 1
-            } else {
-                items[index].isPinned = false
-            }
+    @discardableResult
+    private func trimToLimit() -> Bool {
+        let originalCount = items.count
+        var unpinnedCount = 0
+        items.removeAll { item in
+            guard !item.isPinned else { return false }
+            unpinnedCount += 1
+            return unpinnedCount > limit
         }
+        return items.count != originalCount
     }
 
     private func sortItems() {
-        let pinned = items.filter(\.isPinned)
-        let unpinned = items.filter { !$0.isPinned }
-        items = pinned + unpinned
+        items.sort {
+            if $0.isPinned != $1.isPinned { return $0.isPinned }
+            return $0.createdAt > $1.createdAt
+        }
     }
 
     private func save() {
@@ -211,7 +233,7 @@ final class ClipboardStore: ObservableObject {
             try? fileManager.setAttributes([.posixPermissions: 0o600], ofItemAtPath: historyURL.path)
         } catch {
             canPersist = false
-            persistenceErrorMessage = "Encrypted history could not be saved. Clipboard capture remains available in memory."
+            persistenceErrorMessage = String(localized: "Encrypted history could not be saved. Clipboard capture remains available in memory.")
         }
     }
 }
@@ -225,13 +247,15 @@ final class SnippetStore: ObservableObject {
     private let snippetsURL: URL
     private let cipher: LocalDataCipher
     private var canPersist = true
+    private var hasLoaded = false
 
-    init(directoryURL: URL? = nil, cipher: LocalDataCipher = .keychainBacked) {
+    init(directoryURL: URL? = nil, cipher: LocalDataCipher = .keychainBacked, loadImmediately: Bool = true) {
         let directory = directoryURL ?? fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("clipboard", isDirectory: true)
+            .appendingPathComponent("OptionV", isDirectory: true)
         snippetsURL = directory.appendingPathComponent("snippets.json")
         self.cipher = cipher
-        load()
+        canPersist = loadImmediately
+        if loadImmediately { load() }
     }
 
     @discardableResult
@@ -306,19 +330,37 @@ final class SnippetStore: ObservableObject {
         return true
     }
 
-    private func load() {
-        guard fileManager.fileExists(atPath: snippetsURL.path) else { return }
+    func suspendPersistence(message: String) {
+        canPersist = false
+        persistenceErrorMessage = message
+    }
+
+    func load() {
+        canPersist = true
+        persistenceErrorMessage = nil
+        if hasLoaded {
+            save()
+            return
+        }
+        guard fileManager.fileExists(atPath: snippetsURL.path) else {
+            hasLoaded = true
+            if !snippets.isEmpty { save() }
+            return
+        }
         do {
             let storedData = try Data(contentsOf: snippetsURL)
             let openedData = try cipher.open(storedData, purpose: "clipboard-library")
-            snippets = try JSONDecoder.clipboardDecoder.decode([ClipboardSnippet].self, from: openedData.plaintext)
+            let storedSnippets = try JSONDecoder.clipboardDecoder.decode([ClipboardSnippet].self, from: openedData.plaintext)
+            let pendingTexts = Set(snippets.map(\.text))
+            let hadPendingItems = !snippets.isEmpty
+            snippets += storedSnippets.filter { !pendingTexts.contains($0.text) }
+            hasLoaded = true
             snippets = snippets.filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             sortSnippets()
-            if !openedData.wasEncrypted { save() }
+            if hadPendingItems || !openedData.wasEncrypted { save() }
         } catch {
-            snippets = []
             canPersist = false
-            persistenceErrorMessage = "Encrypted Library data could not be opened. Existing data was preserved."
+            persistenceErrorMessage = String(localized: "Encrypted Library data could not be opened. Existing data was preserved.")
         }
     }
 
@@ -341,7 +383,7 @@ final class SnippetStore: ObservableObject {
             try? fileManager.setAttributes([.posixPermissions: 0o600], ofItemAtPath: snippetsURL.path)
         } catch {
             canPersist = false
-            persistenceErrorMessage = "Encrypted Library data could not be saved. Items remain available in memory."
+            persistenceErrorMessage = String(localized: "Encrypted Library data could not be saved. Items remain available in memory.")
         }
     }
 }

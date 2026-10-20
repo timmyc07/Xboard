@@ -18,17 +18,17 @@ enum ScreenGIFRecordingError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .alreadyRecording:
-            return "A GIF recording is already in progress."
+            return String(localized: "A GIF recording is already in progress.")
         case .cancelled:
-            return "GIF recording cancelled."
+            return String(localized: "GIF recording cancelled.")
         case .noVideoTrack:
-            return "The screen recording did not contain a video track."
+            return String(localized: "The screen recording did not contain a video track.")
         case .readerFailed(let error):
             return "The screen recording could not be read: \(error?.localizedDescription ?? "unknown error")"
         case .noFrames:
-            return "The screen recording did not contain any frames."
+            return String(localized: "The screen recording did not contain any frames.")
         case .couldNotCreateGIF:
-            return "The GIF could not be created."
+            return String(localized: "The GIF could not be created.")
         case .launchFailed(let error):
             return "Screen recording could not start: \(error.localizedDescription)"
         case .captureFailed(let status):
@@ -248,7 +248,7 @@ private final class ScreenRegionSelectionView: NSView {
             border.stroke()
             NSGraphicsContext.restoreGraphicsState()
         } else {
-            let message = "Drag to select an area for the GIF  •  Esc to cancel"
+            let message = String(localized: "Drag to select an area for the GIF  •  Esc to cancel")
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: NSFont.systemFont(ofSize: 15, weight: .medium),
                 .foregroundColor: NSColor.white.withAlphaComponent(0.9)

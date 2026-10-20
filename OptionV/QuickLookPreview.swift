@@ -66,7 +66,7 @@ final class ClipboardQuickLookPreview: NSObject, QLPreviewPanelDataSource, QLPre
 
         if let imageData = item.imageData,
            let imageURL = makeTemporaryImageURL(data: imageData, imageType: item.imageType) {
-            result.append(PreviewItem(url: imageURL, title: item.isGIF ? "Copied GIF" : "Copied image"))
+            result.append(PreviewItem(url: imageURL, title: item.isGIF ? String(localized: "Copied GIF") : String(localized: "Copied image")))
         }
 
         for file in item.files {
@@ -79,7 +79,7 @@ final class ClipboardQuickLookPreview: NSObject, QLPreviewPanelDataSource, QLPre
         if result.isEmpty,
            let text = item.text,
            let textURL = makeTemporaryTextURL(text: text) {
-            result.append(PreviewItem(url: textURL, title: "Copied text"))
+            result.append(PreviewItem(url: textURL, title: String(localized: "Copied text")))
         }
 
         return result

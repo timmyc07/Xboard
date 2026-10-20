@@ -10,11 +10,11 @@ enum ScreenshotCaptureError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .alreadyCapturing:
-            return "A screen capture is already in progress."
+            return String(localized: "A screen capture is already in progress.")
         case .cancelled:
-            return "Screen capture cancelled."
+            return String(localized: "Screen capture cancelled.")
         case .invalidImage:
-            return "The captured image could not be opened."
+            return String(localized: "The captured image could not be opened.")
         case .launchFailed(let error):
             return "Screen capture could not start: \(error.localizedDescription)"
         }

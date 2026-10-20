@@ -43,7 +43,7 @@ enum ClipboardPanelPlacement {
 @MainActor
 final class ClipboardPanelController {
     private var panel: ClipboardPanel?
-    private let pickerSize = NSSize(width: 460, height: 300)
+    private let pickerSize = NSSize(width: 460, height: 326)
 
     func targetApplication(excluding processIdentifier: pid_t) -> NSRunningApplication? {
         if AXIsProcessTrusted(), let focusedApplication = focusedApplicationElement() {
@@ -525,7 +525,7 @@ struct ClipboardPanelView: View {
             HStack {
                 Image(systemName: "doc.on.clipboard.fill")
                     .foregroundStyle(.cyan)
-                Text("clipboard")
+                Text("OptionV")
                     .font(.headline)
                 Spacer()
                 Text(searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -541,17 +541,19 @@ struct ClipboardPanelView: View {
             if items.isEmpty {
                 ContentUnavailableView(
                     searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        ? "Empty history"
-                        : "No matches",
+                        ? String(localized: "Empty history")
+                        : String(localized: "No matches"),
                     systemImage: searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         ? "doc.on.clipboard"
                         : "magnifyingglass"
                 )
                     .frame(maxWidth: .infinity, minHeight: visibleListHeight)
             } else {
+                ScrollViewReader { scrollProxy in
                 List(items) { item in
                     ClipboardRow(
                         item: item,
+                        isSelected: selectedID == item.id,
                         onPaste: onPaste,
                         onTogglePin: { onTogglePin(item) },
                         onPreview: { onPreview(item) },
@@ -560,22 +562,23 @@ struct ClipboardPanelView: View {
                         onSaveGIF: { onSaveGIF(item) }
                     )
                         .contextMenu {
-                            Button(item.isPinned ? "Unpin" : "Pin") { onTogglePin(item) }
+                            Button(item.isPinned ? String(localized: "Unpin") : String(localized: "Pin")) { onTogglePin(item) }
                             if item.hasText {
-                                Button("Save to Library…") { onSaveFavorite(item) }
+                                Button(String(localized: "Save to Library…")) { onSaveFavorite(item) }
                             }
                             if item.canExtractText {
-                                Button("Edit image") { onEdit(item) }
-                                Button("Extract Text & Copy") { onExtractText(item) }
+                                Button(String(localized: "Edit image")) { onEdit(item) }
+                                Button(String(localized: "Extract Text & Copy")) { onExtractText(item) }
                             }
                             if item.isGIF {
-                                Button("Save GIF…") { onSaveGIF(item) }
+                                Button(String(localized: "Save GIF…")) { onSaveGIF(item) }
                             }
-                            Button("Quick Look") { onPreview(item) }
+                            Button(String(localized: "Quick Look")) { onPreview(item) }
                             Divider()
-                            Button("Paste") { onPaste(item, .original) }
-                            Button("Delete", role: .destructive) { onDelete(item) }
+                            Button(String(localized: "Paste")) { onPaste(item, .original) }
+                            Button(String(localized: "Delete"), role: .destructive) { onDelete(item) }
                         }
+                        .id(item.id)
                         .contentShape(Rectangle())
                         .onTapGesture { onPaste(item, .original) }
                 }
@@ -606,10 +609,20 @@ struct ClipboardPanelView: View {
                     clearSearchOrClose()
                     return .handled
                 }
+                .onChange(of: selectedID) { _, id in
+                    if let id { scrollProxy.scrollTo(id, anchor: .center) }
+                }
+                }
             }
+            Text(AXIsProcessTrusted()
+                 ? String(localized: "↑↓ Select · Return Paste · Esc Close")
+                 : String(localized: "Select an item, then press ⌘V in the destination app."))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
         }
         .padding(16)
-        .frame(width: 460, height: 300, alignment: .top)
+        .frame(width: 460, height: 326, alignment: .top)
         .clipShape(panelShape)
         .clipboardGlassSurface(in: panelShape, material: material)
         .opacity(isPresented ? 1 : 0)
@@ -626,10 +639,13 @@ struct ClipboardPanelView: View {
                 }
             }
         }
-        .onChange(of: searchQuery) { _ in
+        .onChange(of: searchQuery) { _, _ in
             keepSelectionVisible(in: items)
         }
-        .onChange(of: store.items) { _ in
+        .onChange(of: store.items) { _, _ in
+            keepSelectionVisible(in: items)
+        }
+        .onChange(of: historyFilter) { _, _ in
             keepSelectionVisible(in: items)
         }
         .onExitCommand(perform: clearSearchOrClose)
@@ -643,7 +659,7 @@ struct ClipboardPanelView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
 
-            TextField("Search history", text: $searchQuery)
+            TextField(String(localized: "Search history"), text: $searchQuery)
                 .textFieldStyle(.plain)
                 .focused($isSearchFocused)
                 .onKeyPress(keys: [.upArrow, .downArrow], phases: [.down, .repeat]) { press in
@@ -678,7 +694,7 @@ struct ClipboardPanelView: View {
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Clear search")
+                .accessibilityLabel(String(localized: "Clear search"))
             }
 
             filterMenu
@@ -712,21 +728,21 @@ struct ClipboardPanelView: View {
 
     private var filterMenu: some View {
         Menu {
-            Picker("Type", selection: $typeFilter) {
+            Picker(String(localized: "Type"), selection: $typeFilter) {
                 ForEach(ClipboardHistoryTypeFilter.allCases) { option in
                     Text(option.title).tag(option)
                 }
             }
 
-            Picker("Date", selection: $dateFilter) {
+            Picker(String(localized: "Date"), selection: $dateFilter) {
                 ForEach(ClipboardHistoryDateFilter.allCases) { option in
                     Text(option.title).tag(option)
                 }
             }
 
             if !sourceApplications.isEmpty {
-                Picker("Source app", selection: $sourceAppFilter) {
-                    Text("All apps").tag(Optional<String>.none)
+                Picker(String(localized: "Source app"), selection: $sourceAppFilter) {
+                    Text(String(localized: "All apps")).tag(Optional<String>.none)
                     ForEach(sourceApplications) { application in
                         Text(application.displayName)
                             .tag(Optional(application.bundleIdentifier))
@@ -736,12 +752,12 @@ struct ClipboardPanelView: View {
 
             Divider()
 
-            Toggle("Pinned only", isOn: $pinnedOnly)
-            Toggle("Has OCR text", isOn: $hasOCR)
+            Toggle(String(localized: "Pinned only"), isOn: $pinnedOnly)
+            Toggle(String(localized: "Has OCR text"), isOn: $hasOCR)
 
             if !historyFilter.isDefault {
                 Divider()
-                Button("Reset filters") {
+                Button(String(localized: "Reset filters")) {
                     resetFilters()
                 }
             }
@@ -761,8 +777,8 @@ struct ClipboardPanelView: View {
         }
         .menuStyle(.borderlessButton)
         .buttonStyle(.plain)
-        .help("Filter history")
-        .accessibilityLabel("Filter history")
+        .help(String(localized: "Filter history"))
+        .accessibilityLabel(String(localized: "Filter history"))
     }
 
     private func resetFilters() {
@@ -782,7 +798,7 @@ struct ClipboardPanelView: View {
                     .frame(width: 28, height: 28)
             }
             .buttonStyle(.glass)
-            .accessibilityLabel("Close")
+            .accessibilityLabel(String(localized: "Close"))
         } else {
             Button(action: onClose) {
                 Image(systemName: "xmark")
@@ -791,7 +807,7 @@ struct ClipboardPanelView: View {
                     .background(Color.primary.opacity(0.08), in: Circle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel(String(localized: "Close"))
         }
     }
 
@@ -855,6 +871,7 @@ struct ClipboardPanelView: View {
 
 private struct ClipboardRow: View {
     let item: ClipboardItem
+    let isSelected: Bool
     let onPaste: (ClipboardItem, ClipboardPasteFormat) -> Void
     let onTogglePin: () -> Void
     let onPreview: () -> Void
@@ -904,8 +921,8 @@ private struct ClipboardRow: View {
                     .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
             }
             .buttonStyle(.plain)
-            .help("Quick Look")
-            .accessibilityLabel("Quick Look")
+            .help(String(localized: "Quick Look"))
+            .accessibilityLabel(String(localized: "Quick Look"))
             if item.isGIF {
                 Button(action: onSaveGIF) {
                     Image(systemName: "square.and.arrow.down")
@@ -917,8 +934,8 @@ private struct ClipboardRow: View {
                         .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
                 }
                 .buttonStyle(.plain)
-                .help("Save GIF")
-                .accessibilityLabel("Save GIF")
+                .help(String(localized: "Save GIF"))
+                .accessibilityLabel(String(localized: "Save GIF"))
             }
             if item.hasImage && !item.isGIF {
                 Button(action: onEdit) {
@@ -931,8 +948,8 @@ private struct ClipboardRow: View {
                         .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
                 }
                 .buttonStyle(.plain)
-                .help("Edit image")
-                .accessibilityLabel("Edit image")
+                .help(String(localized: "Edit image"))
+                .accessibilityLabel(String(localized: "Edit image"))
             }
             Button(action: onTogglePin) {
                 Image(systemName: item.isPinned ? "pin.fill" : "pin")
@@ -944,14 +961,17 @@ private struct ClipboardRow: View {
                     .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
             }
             .buttonStyle(.plain)
-            .help(item.isPinned ? "Unpin" : "Pin")
+            .help(item.isPinned ? String(localized: "Unpin") : String(localized: "Pin"))
         }
         .padding(.vertical, 4)
         .frame(height: 64)
+        .background(isSelected ? Color.accentColor.opacity(0.18) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(isHovered ? Color.primary.opacity(0.32) : .clear, lineWidth: 1)
+                .stroke(isSelected ? Color.accentColor : isHovered ? Color.primary.opacity(0.32) : .clear, lineWidth: 1)
         }
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
         .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .onHover { hovering in
             withAnimation(.easeOut(duration: 0.12)) {
@@ -980,7 +1000,7 @@ private struct SmartPasteMenu: View {
 
     var body: some View {
         Menu {
-            Section("Paste as") {
+            Section(String(localized: "Paste as")) {
                 ForEach(ClipboardPasteFormat.available(for: item)) { format in
                     Button {
                         onPaste(item, format)
@@ -994,7 +1014,7 @@ private struct SmartPasteMenu: View {
                 Button {
                     onExtractText()
                 } label: {
-                    Label("Extract Text & Copy", systemImage: "doc.text.magnifyingglass")
+                    Label(String(localized: "Extract Text & Copy"), systemImage: "doc.text.magnifyingglass")
                 }
             }
         } label: {
@@ -1008,8 +1028,8 @@ private struct SmartPasteMenu: View {
         }
         .menuStyle(.borderlessButton)
         .buttonStyle(.plain)
-        .accessibilityLabel("Smart Paste")
-        .help("Smart Paste")
+        .accessibilityLabel(String(localized: "Smart Paste"))
+        .help(String(localized: "Smart Paste"))
     }
 }
 
@@ -1053,7 +1073,7 @@ struct FavoritesView: View {
             HStack(spacing: 10) {
                 Image(systemName: "star.fill")
                     .foregroundStyle(.yellow)
-                Text("Library")
+                Text(String(localized: "Library"))
                     .font(.title3.weight(.semibold))
                 Spacer()
                 Text(hasMetadataFilter || !searchQuery.isEmpty
@@ -1067,20 +1087,20 @@ struct FavoritesView: View {
                         .frame(width: 28, height: 28)
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel("New favorite")
+                .accessibilityLabel(String(localized: "New favorite"))
                 Button(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.caption.weight(.semibold))
                         .frame(width: 28, height: 28)
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel("Close")
+                .accessibilityLabel(String(localized: "Close"))
             }
 
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
-                TextField("Search library", text: $searchQuery)
+                TextField(String(localized: "Search library"), text: $searchQuery)
                     .textFieldStyle(.plain)
                 if !searchQuery.isEmpty {
                     Button {
@@ -1090,15 +1110,15 @@ struct FavoritesView: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Clear search")
+                    .accessibilityLabel(String(localized: "Clear search"))
                 }
 
                 Menu {
-                    Menu("Collection") {
+                    Menu(String(localized: "Collection")) {
                         Button {
                             selectedCollection = nil
                         } label: {
-                            Label("All collections", systemImage: selectedCollection == nil ? "checkmark" : "folder")
+                            Label(String(localized: "All collections"), systemImage: selectedCollection == nil ? "checkmark" : "folder")
                         }
                         if !collections.isEmpty {
                             Divider()
@@ -1116,7 +1136,7 @@ struct FavoritesView: View {
                         Button {
                             selectedTag = nil
                         } label: {
-                            Label("All tags", systemImage: selectedTag == nil ? "checkmark" : "tag")
+                            Label(String(localized: "All tags"), systemImage: selectedTag == nil ? "checkmark" : "tag")
                         }
                         if !tags.isEmpty {
                             Divider()
@@ -1132,7 +1152,7 @@ struct FavoritesView: View {
 
                     if hasMetadataFilter {
                         Divider()
-                        Button("Reset filters") {
+                        Button(String(localized: "Reset filters")) {
                             selectedCollection = nil
                             selectedTag = nil
                         }
@@ -1145,8 +1165,8 @@ struct FavoritesView: View {
                 }
                 .menuStyle(.borderlessButton)
                 .fixedSize()
-                .help("Filter library")
-                .accessibilityLabel("Filter library")
+                .help(String(localized: "Filter library"))
+                .accessibilityLabel(String(localized: "Filter library"))
             }
             .padding(.horizontal, 10)
             .frame(height: 32)
@@ -1155,12 +1175,12 @@ struct FavoritesView: View {
             if visibleSnippets.isEmpty {
                 ContentUnavailableView(
                     searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !hasMetadataFilter
-                        ? "No library items yet"
-                        : "No matches",
+                        ? String(localized: "No library items yet")
+                        : String(localized: "No matches"),
                     systemImage: searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !hasMetadataFilter
                         ? "star"
                         : "magnifyingglass",
-                    description: Text("Save a text item from history or create one with +.")
+                    description: Text(String(localized: "Save a text item from history or create one with +."))
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
@@ -1172,10 +1192,10 @@ struct FavoritesView: View {
                         onDelete: { _ = store.remove(snippet.id) }
                     )
                     .contextMenu {
-                        Button("Paste") { onPaste(snippet) }
+                        Button(String(localized: "Paste")) { onPaste(snippet) }
                         Button("Edit") { editingSnippet = snippet }
                         Divider()
-                        Button("Delete", role: .destructive) { _ = store.remove(snippet.id) }
+                        Button(String(localized: "Delete"), role: .destructive) { _ = store.remove(snippet.id) }
                     }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 4, trailing: 0))
                     .listRowSeparator(.hidden)
@@ -1247,8 +1267,8 @@ private struct FavoriteRow: View {
                     .font(.system(size: 17, weight: .semibold))
             }
             .buttonStyle(.plain)
-            .help("Paste")
-            .accessibilityLabel("Paste favorite")
+            .help(String(localized: "Paste"))
+            .accessibilityLabel(String(localized: "Paste favorite"))
 
             Button(action: onEdit) {
                 Image(systemName: "pencil")
@@ -1256,15 +1276,15 @@ private struct FavoriteRow: View {
             }
             .buttonStyle(.plain)
             .help("Edit")
-            .accessibilityLabel("Edit favorite")
+            .accessibilityLabel(String(localized: "Edit favorite"))
 
             Button(role: .destructive, action: onDelete) {
                 Image(systemName: "trash")
                     .foregroundStyle(Color.primary.opacity(isHovered ? 0.95 : 0.72))
             }
             .buttonStyle(.plain)
-            .help("Delete")
-            .accessibilityLabel("Delete favorite")
+            .help(String(localized: "Delete"))
+            .accessibilityLabel(String(localized: "Delete favorite"))
         }
         .padding(.vertical, 7)
         .contentShape(Rectangle())
@@ -1306,16 +1326,16 @@ private struct SnippetEditorView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text(snippet.text.isEmpty ? "New Library Item" : "Edit Library Item")
+            Text(snippet.text.isEmpty ? String(localized: "New Library Item") : String(localized: "Edit Library Item"))
                 .font(.title3.weight(.semibold))
 
-            TextField("Title", text: $title)
+            TextField(String(localized: "Title"), text: $title)
                 .textFieldStyle(.roundedBorder)
 
-            TextField("Collection (optional)", text: $collection)
+            TextField(String(localized: "Collection (optional)"), text: $collection)
                 .textFieldStyle(.roundedBorder)
 
-            TextField("Tags, separated by commas", text: $tagsText)
+            TextField(String(localized: "Tags, separated by commas"), text: $tagsText)
                 .textFieldStyle(.roundedBorder)
 
             TextEditor(text: $text)
@@ -1329,9 +1349,9 @@ private struct SnippetEditorView: View {
 
             HStack {
                 Spacer()
-                Button("Cancel", action: onCancel)
+                Button(String(localized: "Cancel"), action: onCancel)
                     .keyboardShortcut(.cancelAction)
-                Button("Save") {
+                Button(String(localized: "Save")) {
                     onSave(ClipboardSnippet(
                         id: snippet.id,
                         createdAt: snippet.createdAt,

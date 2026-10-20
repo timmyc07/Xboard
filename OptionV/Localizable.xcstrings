@@ -1,0 +1,2356 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Hotkeys": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快捷鍵"
+          }
+        }
+      }
+    },
+    "Open history": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟剪貼簿紀錄"
+          }
+        }
+      }
+    },
+    "Record GIF": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製 GIF"
+          }
+        }
+      }
+    },
+    "Start Clipboard Stack": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始連續複製"
+          }
+        }
+      }
+    },
+    "Paste Next Stack Item": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼上下一筆"
+          }
+        }
+      }
+    },
+    "History": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紀錄"
+          }
+        }
+      }
+    },
+    "Recent unpinned items": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保留未釘選筆數"
+          }
+        }
+      }
+    },
+    "History limit": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紀錄筆數"
+          }
+        }
+      }
+    },
+    "Choose any count of 10 or more. Pinned items do not count toward this limit. Large image histories use more memory and disk space.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可自行設定 10 筆以上；釘選項目不計入上限。大量圖片紀錄會使用較多記憶體與磁碟空間。"
+          }
+        }
+      }
+    },
+    "Clear history": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空紀錄"
+          }
+        }
+      }
+    },
+    "Clear unpinned": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除未釘選項目"
+          }
+        }
+      }
+    },
+    "Retention": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動清除期限"
+          }
+        }
+      }
+    },
+    "Unpinned items older than this are removed automatically. Pinned items are kept.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "超過期限的未釘選項目會自動清除，釘選項目會保留。"
+          }
+        }
+      }
+    },
+    "Privacy": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隱私"
+          }
+        }
+      }
+    },
+    "History paused": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫停紀錄"
+          }
+        }
+      }
+    },
+    "History capture": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "記錄剪貼簿"
+          }
+        }
+      }
+    },
+    "Resume": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繼續"
+          }
+        }
+      }
+    },
+    "Pause": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫停"
+          }
+        }
+      }
+    },
+    "Ignore applications": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "排除應用程式"
+          }
+        }
+      }
+    },
+    "No other running applications found.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "找不到其他執行中的應用程式。"
+          }
+        }
+      }
+    },
+    "Copies made while an ignored application is active are not stored.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在排除的應用程式中複製時，不會儲存內容。"
+          }
+        }
+      }
+    },
+    "Local security": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本機安全"
+          }
+        }
+      }
+    },
+    "Encrypted storage": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加密儲存"
+          }
+        }
+      }
+    },
+    "Active": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已啟用"
+          }
+        }
+      }
+    },
+    "History and Library files are encrypted with AES-GCM. The key is stored in this Mac's Keychain and is not synced or uploaded.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "紀錄與常用文字以 AES-GCM 加密；金鑰保存在此 Mac 的鑰匙圈，不會同步或上傳。"
+          }
+        }
+      }
+    },
+    "Protect History and Library": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保護紀錄與常用文字"
+          }
+        }
+      }
+    },
+    "Require Touch ID or the Mac password each time either private view is opened.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每次開啟紀錄或常用文字時，都需要 Touch ID 或 Mac 密碼。"
+          }
+        }
+      }
+    },
+    "Clipboard capture continues in the background.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背景仍會繼續記錄剪貼簿。"
+          }
+        }
+      }
+    },
+    "Device authentication is unavailable on this Mac.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "這台 Mac 無法使用裝置驗證。"
+          }
+        }
+      }
+    },
+    "Startup": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "啟動"
+          }
+        }
+      }
+    },
+    "Launch at login": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登入時啟動"
+          }
+        }
+      }
+    },
+    "Start OptionV automatically after you sign in.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登入後自動啟動 OptionV。"
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外觀"
+          }
+        }
+      }
+    },
+    "Color scheme": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顏色主題"
+          }
+        }
+      }
+    },
+    "Material": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背景樣式"
+          }
+        }
+      }
+    },
+    "Liquid Glass uses the native glass surface on macOS 26 or later and a material fallback on earlier versions.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 26 以上使用原生液態玻璃；較早版本使用標準半透明背景。"
+          }
+        }
+      }
+    },
+    "Automatic paste": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動貼上"
+          }
+        }
+      }
+    },
+    "Accessibility": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "輔助使用"
+          }
+        }
+      }
+    },
+    "Required": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚未授權"
+          }
+        }
+      }
+    },
+    "Open System Settings": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟系統設定"
+          }
+        }
+      }
+    },
+    "Grant access to paste into the previous app automatically. History and manual paste work without it.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "授權後可自動貼回原本的應用程式。未授權仍可使用紀錄與手動貼上。"
+          }
+        }
+      }
+    },
+    "Clear history?": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "要清空所有紀錄嗎？"
+          }
+        }
+      }
+    },
+    "Clear": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
+          }
+        }
+      }
+    },
+    "Removes text, images, and references stored by the app.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除本程式儲存的文字、圖片與檔案參照。"
+          }
+        }
+      }
+    },
+    "Clear unpinned history?": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "要清除未釘選的紀錄嗎？"
+          }
+        }
+      }
+    },
+    "Pinned items and original files remain untouched.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "釘選項目與原始檔案會保留。"
+          }
+        }
+      }
+    },
+    "Press a new combination…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請按下新的快捷鍵…"
+          }
+        }
+      }
+    },
+    "Not set": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未設定"
+          }
+        }
+      }
+    },
+    "Change": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更改"
+          }
+        }
+      }
+    },
+    "Set": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定"
+          }
+        }
+      }
+    },
+    "Your clipboard history, free and stored only on this Mac.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "免費的剪貼簿紀錄，內容只保存在這台 Mac。"
+          }
+        }
+      }
+    },
+    "Select an item to paste. Without Accessibility permission, select it and press ⌘V in the destination app.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選取項目即可貼上。未授權輔助使用時，選取後請在目標程式按 ⌘V。"
+          }
+        }
+      }
+    },
+    "Allow clipboard access when macOS asks so OptionV can save your copied items.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 詢問時，請允許剪貼簿存取，以便 OptionV 儲存複製內容。"
+          }
+        }
+      }
+    },
+    "Option-based shortcuts may be blocked in password fields. Change the shortcut if it conflicts with your input method.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Option 快捷鍵可能在密碼欄位中被系統阻擋；若與輸入法衝突，可在這裡更改。"
+          }
+        }
+      }
+    },
+    "Ignore Next Copy": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "略過下一次複製"
+          }
+        }
+      }
+    },
+    "Resume History": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繼續記錄"
+          }
+        }
+      }
+    },
+    "Pause History": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暫停記錄"
+          }
+        }
+      }
+    },
+    "More tools": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更多工具"
+          }
+        }
+      }
+    },
+    "Library…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "常用文字…"
+          }
+        }
+      }
+    },
+    "Capture and Annotate…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "截圖與標註…"
+          }
+        }
+      }
+    },
+    "Stop GIF Recording": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止錄製 GIF"
+          }
+        }
+      }
+    },
+    "Cancel GIF Recording": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消錄製 GIF"
+          }
+        }
+      }
+    },
+    "Record GIF…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製 GIF…"
+          }
+        }
+      }
+    },
+    "Save Latest GIF…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "另存最近的 GIF…"
+          }
+        }
+      }
+    },
+    "Cancel Stack Capture": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消連續複製"
+          }
+        }
+      }
+    },
+    "Clear Clipboard Stack": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空連續複製佇列"
+          }
+        }
+      }
+    },
+    "Settings…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定…"
+          }
+        }
+      }
+    },
+    "Quit OptionV": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結束 OptionV"
+          }
+        }
+      }
+    },
+    "System": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟隨系統"
+          }
+        }
+      }
+    },
+    "Light": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "淺色"
+          }
+        }
+      }
+    },
+    "Dark": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深色"
+          }
+        }
+      }
+    },
+    "Liquid Glass": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "液態玻璃"
+          }
+        }
+      }
+    },
+    "Standard": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "標準"
+          }
+        }
+      }
+    },
+    "Hotkeys must be different.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快捷鍵不能重複。"
+          }
+        }
+      }
+    },
+    "Hotkey unavailable; previous configuration kept.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此快捷鍵無法使用，已保留原本設定。"
+          }
+        }
+      }
+    },
+    "GIF hotkey unavailable; previous configuration kept.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GIF 快捷鍵無法使用，已保留原本設定。"
+          }
+        }
+      }
+    },
+    "That hotkey is already in use.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此快捷鍵已被使用。"
+          }
+        }
+      }
+    },
+    "Launch at login could not be changed.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法更改登入時啟動設定。"
+          }
+        }
+      }
+    },
+    "Open clipboard history": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟剪貼簿紀錄"
+          }
+        }
+      }
+    },
+    "This item cannot be edited.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法編輯此項目。"
+          }
+        }
+      }
+    },
+    "Text extraction is available for static images only.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅靜態圖片可擷取文字。"
+          }
+        }
+      }
+    },
+    "Extracting text…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在擷取文字…"
+          }
+        }
+      }
+    },
+    "No text was detected in the image.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未在圖片中找到文字。"
+          }
+        }
+      }
+    },
+    "The extracted text could not be copied.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法複製擷取的文字。"
+          }
+        }
+      }
+    },
+    "Extracted text copied to the clipboard.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已複製擷取的文字。"
+          }
+        }
+      }
+    },
+    "No preview is available for this item.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法預覽此項目。"
+          }
+        }
+      }
+    },
+    "Item deleted.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已刪除項目。"
+          }
+        }
+      }
+    },
+    "Only text items can be saved to the Library.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅文字可存入常用文字。"
+          }
+        }
+      }
+    },
+    "Saved to Library.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已存入常用文字。"
+          }
+        }
+      }
+    },
+    "Open the clipboard Library": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開啟常用文字"
+          }
+        }
+      }
+    },
+    "Library — OptionV": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "常用文字 — OptionV"
+          }
+        }
+      }
+    },
+    "History and Library authentication disabled.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已停用紀錄與常用文字驗證。"
+          }
+        }
+      }
+    },
+    "Touch ID or Mac authentication is unavailable.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法使用 Touch ID 或 Mac 密碼驗證。"
+          }
+        }
+      }
+    },
+    "Protect clipboard history and Library": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保護剪貼簿紀錄與常用文字"
+          }
+        }
+      }
+    },
+    "History and Library authentication enabled.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已啟用紀錄與常用文字驗證。"
+          }
+        }
+      }
+    },
+    "Authentication was cancelled or failed.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "驗證已取消或失敗。"
+          }
+        }
+      }
+    },
+    "Settings — OptionV": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定 — OptionV"
+          }
+        }
+      }
+    },
+    "History cleared.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清空紀錄。"
+          }
+        }
+      }
+    },
+    "No unpinned items to clear.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有可清除的未釘選項目。"
+          }
+        }
+      }
+    },
+    "History capture paused.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已暫停記錄。"
+          }
+        }
+      }
+    },
+    "History capture resumed.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已繼續記錄。"
+          }
+        }
+      }
+    },
+    "Stack capture started. Copy the items you want to paste in sequence.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已開始連續複製，請依序複製要貼上的項目。"
+          }
+        }
+      }
+    },
+    "Stack capture finished without items.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連續複製結束，沒有項目。"
+          }
+        }
+      }
+    },
+    "Stack cleared.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清空連續複製佇列。"
+          }
+        }
+      }
+    },
+    "Finish stack capture before pasting.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先結束連續複製，再貼上。"
+          }
+        }
+      }
+    },
+    "The clipboard stack is empty.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連續複製佇列是空的。"
+          }
+        }
+      }
+    },
+    "Last stack item pasted.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已貼上最後一筆。"
+          }
+        }
+      }
+    },
+    "Last stack item is on the clipboard. Press ⌘V to paste.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最後一筆已放入剪貼簿，按 ⌘V 貼上。"
+          }
+        }
+      }
+    },
+    "Stack item ready on the clipboard. Press ⌘V, then paste the next item.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目已放入剪貼簿，請先按 ⌘V，再貼下一筆。"
+          }
+        }
+      }
+    },
+    "Next clipboard copy will be ignored.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將略過下一次複製。"
+          }
+        }
+      }
+    },
+    "Press a new history combination…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請按下新的紀錄快捷鍵…"
+          }
+        }
+      }
+    },
+    "Press a new GIF combination…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請按下新的 GIF 快捷鍵…"
+          }
+        }
+      }
+    },
+    "Press a new stack start combination…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請按下新的連續複製快捷鍵…"
+          }
+        }
+      }
+    },
+    "Press a new paste next combination…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請按下新的貼下一筆快捷鍵…"
+          }
+        }
+      }
+    },
+    "Combination unavailable.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此組合無法使用。"
+          }
+        }
+      }
+    },
+    "Stack start hotkey cleared.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清除連續複製快捷鍵。"
+          }
+        }
+      }
+    },
+    "Paste next hotkey cleared.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清除貼下一筆快捷鍵。"
+          }
+        }
+      }
+    },
+    "GIF recording hotkey cleared.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清除 GIF 錄製快捷鍵。"
+          }
+        }
+      }
+    },
+    "A screen capture is already in progress.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已有截圖作業進行中。"
+          }
+        }
+      }
+    },
+    "Select an area to capture…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請選取截圖範圍…"
+          }
+        }
+      }
+    },
+    "The annotated screenshot could not be copied.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法複製標註後的截圖。"
+          }
+        }
+      }
+    },
+    "Annotated screenshot copied to the clipboard.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已複製標註後的截圖。"
+          }
+        }
+      }
+    },
+    "A GIF recording is already in progress.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已有 GIF 錄製作業進行中。"
+          }
+        }
+      }
+    },
+    "Drag to select an area. Release to start recording.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拖曳選取範圍，放開後開始錄製。"
+          }
+        }
+      }
+    },
+    "Finishing GIF recording…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在完成 GIF 錄製…"
+          }
+        }
+      }
+    },
+    "Cancelling GIF recording…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在取消 GIF 錄製…"
+          }
+        }
+      }
+    },
+    "No GIF is available to save.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有可儲存的 GIF。"
+          }
+        }
+      }
+    },
+    "This item is not a GIF.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此項目不是 GIF。"
+          }
+        }
+      }
+    },
+    "The GIF could not be saved.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法儲存 GIF。"
+          }
+        }
+      }
+    },
+    "The GIF could not be copied to the clipboard.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法複製 GIF。"
+          }
+        }
+      }
+    },
+    "GIF copied to the clipboard. Press ⌘V to paste.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已複製 GIF，按 ⌘V 貼上。"
+          }
+        }
+      }
+    },
+    "Item restored to the clipboard. Press ⌘V to paste.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目已放回剪貼簿，按 ⌘V 貼上。"
+          }
+        }
+      }
+    },
+    "Encrypted history could not be opened. Existing data was preserved.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法開啟加密紀錄，原有資料已保留。"
+          }
+        }
+      }
+    },
+    "Encrypted history could not be saved. Clipboard capture remains available in memory.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法儲存加密紀錄，仍可使用記憶體中的剪貼簿內容。"
+          }
+        }
+      }
+    },
+    "Encrypted Library data could not be opened. Existing data was preserved.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法開啟加密常用文字，原有資料已保留。"
+          }
+        }
+      }
+    },
+    "Encrypted Library data could not be saved. Items remain available in memory.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法儲存加密常用文字，仍可使用記憶體中的項目。"
+          }
+        }
+      }
+    },
+    "Annotate Screenshot": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "標註截圖"
+          }
+        }
+      }
+    },
+    "Copy to Clipboard": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製到剪貼簿"
+          }
+        }
+      }
+    },
+    "Draw on the capture, then copy the finished image.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在截圖上標註，完成後複製圖片。"
+          }
+        }
+      }
+    },
+    "Screen capture cancelled.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消截圖。"
+          }
+        }
+      }
+    },
+    "The captured image could not be opened.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法開啟擷取的圖片。"
+          }
+        }
+      }
+    },
+    "Original": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始格式"
+          }
+        }
+      }
+    },
+    "Plain Text": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "純文字"
+          }
+        }
+      }
+    },
+    "Clean Markdown": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown"
+          }
+        }
+      }
+    },
+    "Format JSON": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "格式化 JSON"
+          }
+        }
+      }
+    },
+    "Markdown Link": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markdown 連結"
+          }
+        }
+      }
+    },
+    "Copied GIF": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製的 GIF"
+          }
+        }
+      }
+    },
+    "Copied image": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製的圖片"
+          }
+        }
+      }
+    },
+    "Copied text": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製的文字"
+          }
+        }
+      }
+    },
+    "All types": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有類型"
+          }
+        }
+      }
+    },
+    "Text": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文字"
+          }
+        }
+      }
+    },
+    "Images": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圖片"
+          }
+        }
+      }
+    },
+    "Files": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檔案"
+          }
+        }
+      }
+    },
+    "Mixed": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "混合"
+          }
+        }
+      }
+    },
+    "All time": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不限時間"
+          }
+        }
+      }
+    },
+    "Today": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今天"
+          }
+        }
+      }
+    },
+    "Last 7 days": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近 7 天"
+          }
+        }
+      }
+    },
+    "Last 30 days": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近 30 天"
+          }
+        }
+      }
+    },
+    "Never": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "永不"
+          }
+        }
+      }
+    },
+    "1 day": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 天"
+          }
+        }
+      }
+    },
+    "7 days": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 天"
+          }
+        }
+      }
+    },
+    "30 days": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 天"
+          }
+        }
+      }
+    },
+    "15 minutes": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15 分鐘"
+          }
+        }
+      }
+    },
+    "1 hour": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 小時"
+          }
+        }
+      }
+    },
+    "Until resumed": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "直到手動繼續"
+          }
+        }
+      }
+    },
+    "Image": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圖片"
+          }
+        }
+      }
+    },
+    "File": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檔案"
+          }
+        }
+      }
+    },
+    "Mixed content": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "混合內容"
+          }
+        }
+      }
+    },
+    "Copied content": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複製的內容"
+          }
+        }
+      }
+    },
+    "GIF recording cancelled.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消 GIF 錄製。"
+          }
+        }
+      }
+    },
+    "The GIF could not be created.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法建立 GIF。"
+          }
+        }
+      }
+    },
+    "The screen recording did not contain a video track.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製檔案沒有影片軌道。"
+          }
+        }
+      }
+    },
+    "The screen recording did not contain any frames.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "錄製檔案沒有影格。"
+          }
+        }
+      }
+    },
+    "Drag to select an area for the GIF  •  Esc to cancel": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拖曳選取 GIF 範圍・按 Esc 取消"
+          }
+        }
+      }
+    },
+    "All apps": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有程式"
+          }
+        }
+      }
+    },
+    "All collections": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有分類"
+          }
+        }
+      }
+    },
+    "All tags": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有標籤"
+          }
+        }
+      }
+    },
+    "Clear search": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除搜尋"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "關閉"
+          }
+        }
+      }
+    },
+    "Collection": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分類"
+          }
+        }
+      }
+    },
+    "Collection (optional)": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分類（選填）"
+          }
+        }
+      }
+    },
+    "Date": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日期"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除"
+          }
+        }
+      }
+    },
+    "Delete favorite": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刪除常用文字"
+          }
+        }
+      }
+    },
+    "Edit Library Item": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯常用文字"
+          }
+        }
+      }
+    },
+    "Edit favorite": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯常用文字"
+          }
+        }
+      }
+    },
+    "Edit image": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "編輯圖片"
+          }
+        }
+      }
+    },
+    "Empty history": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚無紀錄"
+          }
+        }
+      }
+    },
+    "Extract Text & Copy": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "擷取並複製文字"
+          }
+        }
+      }
+    },
+    "Filter history": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "篩選紀錄"
+          }
+        }
+      }
+    },
+    "Filter library": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "篩選常用文字"
+          }
+        }
+      }
+    },
+    "Has OCR text": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "包含辨識文字"
+          }
+        }
+      }
+    },
+    "Library": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "常用文字"
+          }
+        }
+      }
+    },
+    "New Library Item": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增常用文字"
+          }
+        }
+      }
+    },
+    "New favorite": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新增常用文字"
+          }
+        }
+      }
+    },
+    "No library items yet": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尚無常用文字"
+          }
+        }
+      }
+    },
+    "No matches": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沒有符合的項目"
+          }
+        }
+      }
+    },
+    "Paste": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼上"
+          }
+        }
+      }
+    },
+    "Paste as": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼上格式"
+          }
+        }
+      }
+    },
+    "Paste favorite": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼上常用文字"
+          }
+        }
+      }
+    },
+    "Pin": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "釘選"
+          }
+        }
+      }
+    },
+    "Pinned only": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅顯示釘選"
+          }
+        }
+      }
+    },
+    "Quick Look": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快速預覽"
+          }
+        }
+      }
+    },
+    "Reset filters": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重設篩選"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存"
+          }
+        }
+      }
+    },
+    "Save GIF": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存 GIF"
+          }
+        }
+      }
+    },
+    "Save GIF…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "儲存 GIF…"
+          }
+        }
+      }
+    },
+    "Save a text item from history or create one with +.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可從紀錄儲存文字，或按 + 新增。"
+          }
+        }
+      }
+    },
+    "Save to Library…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存入常用文字…"
+          }
+        }
+      }
+    },
+    "Search history": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜尋紀錄"
+          }
+        }
+      }
+    },
+    "Search library": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜尋常用文字"
+          }
+        }
+      }
+    },
+    "Select an item, then press ⌘V in the destination app.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選取項目後，在目標程式按 ⌘V 貼上。"
+          }
+        }
+      }
+    },
+    "Smart Paste": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼上格式"
+          }
+        }
+      }
+    },
+    "Source app": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "來源程式"
+          }
+        }
+      }
+    },
+    "Tags, separated by commas": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "標籤，以逗號分隔"
+          }
+        }
+      }
+    },
+    "Title": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "標題"
+          }
+        }
+      }
+    },
+    "Type": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "類型"
+          }
+        }
+      }
+    },
+    "Unpin": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消釘選"
+          }
+        }
+      }
+    },
+    "↑↓ Select · Return Paste · Esc Close": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "↑↓ 選取・Return 貼上・Esc 關閉"
+          }
+        }
+      }
+    },
+    "Press %@ to search copied text, images, and files.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按 %@ 搜尋複製過的文字、圖片與檔案。"
+          }
+        }
+      }
+    },
+    "Could not register %@.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法註冊快捷鍵 %@。"
+          }
+        }
+      }
+    },
+    "Could not register %@ for GIF recording.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法註冊 GIF 錄製快捷鍵 %@。"
+          }
+        }
+      }
+    },
+    "Hotkey set: %@": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快捷鍵已設定為 %@"
+          }
+        }
+      }
+    },
+    "GIF saved to %@.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GIF 已儲存為 %@。"
+          }
+        }
+      }
+    },
+    "%@ is unavailable for this item.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此項目無法使用「%@」。"
+          }
+        }
+      }
+    },
+    "Finish Stack Capture (%lld)": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "結束連續複製（%lld 筆）"
+          }
+        }
+      }
+    },
+    "Stack item pasted. (%lld) remaining.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已貼上，還剩 %lld 筆。"
+          }
+        }
+      }
+    },
+    "Cleared %lld unpinned items.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已清除 %lld 筆未釘選項目。"
+          }
+        }
+      }
+    },
+    "Stack ready: %lld items queued.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "佇列已就緒，共 %lld 筆。"
+          }
+        }
+      }
+    },
+    "Unavailable": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法使用"
+          }
+        }
+      }
+    },
+    "Waiting for Keychain access…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等待鑰匙圈授權…"
+          }
+        }
+      }
+    },
+    "Complete the macOS Keychain prompt. Until then, new items remain in memory.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請完成 macOS 的鑰匙圈授權提示；完成前，新項目僅暫存在記憶體。"
+          }
+        }
+      }
+    },
+    "Retry storage access": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重試儲存存取"
+          }
+        }
+      }
+    },
+    "Keychain access was not granted. Saved data was preserved; new items stay in memory.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未取得鑰匙圈存取權。既有資料已保留，新項目僅暫存在記憶體。"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

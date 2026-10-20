@@ -54,6 +54,15 @@ final class GlobalHotKeyManager {
             return true
         }
 
+        currentConfiguration = nil
+        guard install(configuration) else {
+            if let previous { _ = install(previous) }
+            return false
+        }
+        return true
+    }
+
+    private func install(_ configuration: HotKeyConfiguration) -> Bool {
         let identifier = EventHotKeyID(signature: Self.signature, id: identifier)
         var newRef: EventHotKeyRef?
         let status = RegisterEventHotKey(
@@ -64,10 +73,7 @@ final class GlobalHotKeyManager {
             0,
             &newRef
         )
-        guard status == noErr else {
-            if let previous { _ = register(previous) }
-            return false
-        }
+        guard status == noErr else { return false }
         hotKeyRef = newRef
         currentConfiguration = configuration
         return true

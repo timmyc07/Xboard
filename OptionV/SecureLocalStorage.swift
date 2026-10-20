@@ -69,7 +69,7 @@ struct LocalDataCipher {
     }
 }
 
-private final class LocalDataKeychain {
+final class LocalDataKeychain {
     private enum KeyReadResult {
         case key(Data)
         case status(OSStatus)
@@ -77,11 +77,18 @@ private final class LocalDataKeychain {
 
     static let shared = LocalDataKeychain()
 
-    private let service = "com.kelsiito.clipboard.local-storage"
+    private let service: String
     private let account = "aes-gcm-key-v1"
     private var cachedKey: Data?
+    private let lock = NSLock()
+
+    init(service: String = "io.github.timmyc07.OptionV.local-storage") {
+        self.service = service
+    }
 
     func keyData() throws -> Data {
+        lock.lock()
+        defer { lock.unlock() }
         if let cachedKey { return cachedKey }
 
         switch readKey() {
@@ -94,8 +101,9 @@ private final class LocalDataKeychain {
                 kSecClass as String: kSecClassGenericPassword,
                 kSecAttrService as String: service,
                 kSecAttrAccount as String: account,
-                kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-                kSecUseDataProtectionKeychain as String: true,
+                // Ad-hoc builds have no provisioned access group; use the macOS login keychain.
+                kSecUseDataProtectionKeychain as String: false,
+                kSecAttrSynchronizable as String: false,
                 kSecValueData as String: key
             ] as CFDictionary, nil)
 
@@ -119,7 +127,7 @@ private final class LocalDataKeychain {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
-            kSecUseDataProtectionKeychain as String: true,
+            kSecUseDataProtectionKeychain as String: false,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ] as CFDictionary
@@ -155,7 +163,7 @@ final class DeviceAuthenticationService {
 
     func authenticate(reason: String, completion: @escaping (Bool) -> Void) {
         let context = LAContext()
-        context.localizedCancelTitle = "Cancel"
+        context.localizedCancelTitle = String(localized: "Cancel")
         var error: NSError?
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
             completion(false)

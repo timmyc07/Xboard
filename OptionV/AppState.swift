@@ -22,9 +22,9 @@ enum ClipboardAppearance: String, CaseIterable, Hashable, Identifiable {
 
     var title: String {
         switch self {
-        case .system: return "System"
-        case .light: return "Light"
-        case .dark: return "Dark"
+        case .system: return String(localized: "System")
+        case .light: return String(localized: "Light")
+        case .dark: return String(localized: "Dark")
         }
     }
 
@@ -53,8 +53,8 @@ enum ClipboardMaterial: String, CaseIterable, Hashable, Identifiable {
 
     var title: String {
         switch self {
-        case .liquidGlass: return "Liquid Glass"
-        case .standard: return "Standard"
+        case .liquidGlass: return String(localized: "Liquid Glass")
+        case .standard: return String(localized: "Standard")
         }
     }
 }
@@ -72,18 +72,18 @@ final class AppState: ObservableObject {
 
     @Published var hotKey: HotKeyConfiguration {
         didSet {
-            UserDefaults.standard.set(try? JSONEncoder().encode(hotKey), forKey: Keys.hotKey)
+            defer { UserDefaults.standard.set(try? JSONEncoder().encode(hotKey), forKey: Keys.hotKey) }
             guard hasStarted else {
                 oldHotKey = hotKey
                 return
             }
             guard !isHotKeyInUse(hotKey, excluding: .history) else {
-                statusMessage = "Hotkeys must be different."
+                statusMessage = String(localized: "Hotkeys must be different.")
                 hotKey = oldHotKey
                 return
             }
             if !hotKeyManager.register(hotKey) {
-                statusMessage = "Hotkey unavailable; previous configuration kept."
+                statusMessage = String(localized: "Hotkey unavailable; previous configuration kept.")
                 hotKey = oldHotKey
             } else {
                 oldHotKey = hotKey
@@ -91,20 +91,20 @@ final class AppState: ObservableObject {
         }
     }
 
-    @Published var gifHotKey: HotKeyConfiguration {
+    @Published var gifHotKey: HotKeyConfiguration? {
         didSet {
-            UserDefaults.standard.set(try? JSONEncoder().encode(gifHotKey), forKey: Keys.gifHotKey)
+            defer { persistOptionalHotKey(gifHotKey, key: Keys.gifHotKey) }
             guard hasStarted else {
                 oldGIFHotKey = gifHotKey
                 return
             }
             guard !isHotKeyInUse(gifHotKey, excluding: .gif) else {
-                statusMessage = "Hotkeys must be different."
+                statusMessage = String(localized: "Hotkeys must be different.")
                 gifHotKey = oldGIFHotKey
                 return
             }
             if !gifHotKeyManager.register(gifHotKey) {
-                statusMessage = "GIF hotkey unavailable; previous configuration kept."
+                statusMessage = String(localized: "GIF hotkey unavailable; previous configuration kept.")
                 gifHotKey = oldGIFHotKey
             } else {
                 oldGIFHotKey = gifHotKey
@@ -114,18 +114,18 @@ final class AppState: ObservableObject {
 
     @Published var stackStartHotKey: HotKeyConfiguration? {
         didSet {
-            persistOptionalHotKey(stackStartHotKey, key: Keys.stackStartHotKey)
+            defer { persistOptionalHotKey(stackStartHotKey, key: Keys.stackStartHotKey) }
             guard hasStarted else {
                 oldStackStartHotKey = stackStartHotKey
                 return
             }
             guard !isHotKeyInUse(stackStartHotKey, excluding: .stackStart) else {
-                statusMessage = "That hotkey is already in use."
+                statusMessage = String(localized: "That hotkey is already in use.")
                 stackStartHotKey = oldStackStartHotKey
                 return
             }
             if !stackStartHotKeyManager.register(stackStartHotKey) {
-                statusMessage = "Hotkey unavailable; previous configuration kept."
+                statusMessage = String(localized: "Hotkey unavailable; previous configuration kept.")
                 stackStartHotKey = oldStackStartHotKey
             } else {
                 oldStackStartHotKey = stackStartHotKey
@@ -135,18 +135,18 @@ final class AppState: ObservableObject {
 
     @Published var stackNextHotKey: HotKeyConfiguration? {
         didSet {
-            persistOptionalHotKey(stackNextHotKey, key: Keys.stackNextHotKey)
+            defer { persistOptionalHotKey(stackNextHotKey, key: Keys.stackNextHotKey) }
             guard hasStarted else {
                 oldStackNextHotKey = stackNextHotKey
                 return
             }
             guard !isHotKeyInUse(stackNextHotKey, excluding: .stackNext) else {
-                statusMessage = "That hotkey is already in use."
+                statusMessage = String(localized: "That hotkey is already in use.")
                 stackNextHotKey = oldStackNextHotKey
                 return
             }
             if !stackNextHotKeyManager.register(stackNextHotKey) {
-                statusMessage = "Hotkey unavailable; previous configuration kept."
+                statusMessage = String(localized: "Hotkey unavailable; previous configuration kept.")
                 stackNextHotKey = oldStackNextHotKey
             } else {
                 oldStackNextHotKey = stackNextHotKey
@@ -156,7 +156,7 @@ final class AppState: ObservableObject {
 
     @Published var historyLimit: Int {
         didSet {
-            historyLimit = min(max(historyLimit, 10), 200)
+            historyLimit = max(historyLimit, 10)
             UserDefaults.standard.set(historyLimit, forKey: Keys.historyLimit)
             store.setLimit(historyLimit)
         }
@@ -213,7 +213,7 @@ final class AppState: ObservableObject {
                 isUpdatingLaunchAtLogin = true
                 launchAtLogin = !requestedValue
                 isUpdatingLaunchAtLogin = false
-                statusMessage = "Launch at login could not be changed."
+                statusMessage = String(localized: "Launch at login could not be changed.")
             }
         }
     }
@@ -223,6 +223,7 @@ final class AppState: ObservableObject {
     @Published private(set) var isCapturingScreenshot = false
     @Published private(set) var isRecordingGIF = false
     @Published var statusMessage: String?
+    @Published private(set) var isLoadingStorage = false
 
     let store: ClipboardStore
     let snippetStore: SnippetStore
@@ -251,22 +252,22 @@ final class AppState: ObservableObject {
     private var isUpdatingLaunchAtLogin = false
     private var isAuthenticatingPrivateView = false
     private var oldHotKey: HotKeyConfiguration
-    private var oldGIFHotKey: HotKeyConfiguration
+    private var oldGIFHotKey: HotKeyConfiguration?
     private var oldStackStartHotKey: HotKeyConfiguration?
     private var oldStackNextHotKey: HotKeyConfiguration?
     private var recordingHotKeyTarget: HotKeyTarget?
     private enum Keys {
-        static let hotKey = "clipboard.hotKey"
-        static let gifHotKey = "clipboard.gifHotKey"
-        static let stackStartHotKey = "clipboard.stackStartHotKey"
-        static let stackNextHotKey = "clipboard.stackNextHotKey"
-        static let historyLimit = "clipboard.historyLimit"
-        static let retention = "clipboard.retention"
-        static let ignoredBundleIdentifiers = "clipboard.ignoredBundleIdentifiers"
-        static let appearance = "clipboard.appearance"
-        static let material = "clipboard.material"
-        static let launchAtLogin = "clipboard.launchAtLogin"
-        static let requireAuthenticationForPrivateViews = "clipboard.requireAuthenticationForPrivateViews"
+        static let hotKey = "optionv.hotKey"
+        static let gifHotKey = "optionv.gifHotKey"
+        static let stackStartHotKey = "optionv.stackStartHotKey"
+        static let stackNextHotKey = "optionv.stackNextHotKey"
+        static let historyLimit = "optionv.historyLimit"
+        static let retention = "optionv.retention"
+        static let ignoredBundleIdentifiers = "optionv.ignoredBundleIdentifiers"
+        static let appearance = "optionv.appearance"
+        static let material = "optionv.material"
+        static let launchAtLogin = "optionv.launchAtLogin"
+        static let requireAuthenticationForPrivateViews = "optionv.requireAuthenticationForPrivateViews"
     }
 
     private init() {
@@ -274,12 +275,13 @@ final class AppState: ObservableObject {
         let savedRetention = UserDefaults.standard.string(forKey: Keys.retention)
             .flatMap(ClipboardRetention.init(rawValue:)) ?? .never
         store = ClipboardStore(
-            limit: savedHistoryLimit == 0 ? 50 : savedHistoryLimit,
-            retention: savedRetention
+            limit: savedHistoryLimit == 0 ? 200 : savedHistoryLimit,
+            retention: savedRetention,
+            loadImmediately: false
         )
-        snippetStore = SnippetStore()
+        snippetStore = SnippetStore(loadImmediately: false)
         let savedHotKey = (UserDefaults.standard.data(forKey: Keys.hotKey).flatMap { try? JSONDecoder().decode(HotKeyConfiguration.self, from: $0) }) ?? .default
-        let savedGIFHotKey = (UserDefaults.standard.data(forKey: Keys.gifHotKey).flatMap { try? JSONDecoder().decode(HotKeyConfiguration.self, from: $0) }) ?? .gifDefault
+        let savedGIFHotKey = (UserDefaults.standard.data(forKey: Keys.gifHotKey).flatMap { try? JSONDecoder().decode(HotKeyConfiguration.self, from: $0) })
         let savedStackStartHotKey = UserDefaults.standard.data(forKey: Keys.stackStartHotKey)
             .flatMap { try? JSONDecoder().decode(HotKeyConfiguration.self, from: $0) }
         let savedStackNextHotKey = UserDefaults.standard.data(forKey: Keys.stackNextHotKey)
@@ -333,6 +335,11 @@ final class AppState: ObservableObject {
     func start() {
         guard !hasStarted else { return }
         hasStarted = true
+        retryStorageAccess()
+        if !UserDefaults.standard.bool(forKey: "optionv.hasOpenedSettings") {
+            UserDefaults.standard.set(true, forKey: "optionv.hasOpenedSettings")
+            DispatchQueue.main.async { self.showSettings() }
+        }
         refreshAvailableApplications()
         monitor.ignoredBundleIdentifiers = ignoredBundleIdentifiers
         monitor.start()
@@ -341,10 +348,10 @@ final class AppState: ObservableObject {
         oldStackStartHotKey = stackStartHotKey
         oldStackNextHotKey = stackNextHotKey
         if !hotKeyManager.register(hotKey) {
-            statusMessage = "Could not register \(hotKey.displayString)."
+            statusMessage = String(localized: "Could not register \(hotKey.displayString).")
         }
-        if !gifHotKeyManager.register(gifHotKey) {
-            statusMessage = "Could not register \(gifHotKey.displayString) for GIF recording."
+        if !gifHotKeyManager.register(gifHotKey), let gifHotKey {
+            statusMessage = String(localized: "Could not register \(gifHotKey.displayString) for GIF recording.")
         }
         _ = stackStartHotKeyManager.register(stackStartHotKey)
         _ = stackNextHotKeyManager.register(stackNextHotKey)
@@ -373,6 +380,27 @@ final class AppState: ObservableObject {
         stopRecordingHotKey()
     }
 
+    func retryStorageAccess() {
+        guard !isLoadingStorage else { return }
+        isLoadingStorage = true
+        // Keychain authorization can wait for user interaction; keep it off the UI thread.
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let result = Result { try LocalDataKeychain.shared.keyData() }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if case .success = result {
+                    self.store.load()
+                    self.snippetStore.load()
+                } else {
+                    let message = String(localized: "Keychain access was not granted. Saved data was preserved; new items stay in memory.")
+                    self.store.suspendPersistence(message: message)
+                    self.snippetStore.suspendPersistence(message: message)
+                }
+                self.isLoadingStorage = false
+            }
+        }
+    }
+
     func showPanel() {
         quickLookPreview.close()
         let currentProcessIdentifier = NSRunningApplication.current.processIdentifier
@@ -384,7 +412,7 @@ final class AppState: ObservableObject {
             presentPanel(targetApplication: resolvedTargetApplication)
             return
         }
-        authenticatePrivateView(reason: "Open clipboard history") { [weak self] in
+        authenticatePrivateView(reason: String(localized: "Open clipboard history")) { [weak self] in
             self?.presentPanel(targetApplication: resolvedTargetApplication)
         }
     }
@@ -392,11 +420,6 @@ final class AppState: ObservableObject {
     private func presentPanel(targetApplication resolvedTargetApplication: NSRunningApplication?) {
         targetApplication = resolvedTargetApplication
 
-        if !AXIsProcessTrusted() {
-            statusMessage = "Enable Accessibility to position the picker near the field and paste automatically."
-            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
-        }
 
         panelController.show(
             store: store,
@@ -417,7 +440,7 @@ final class AppState: ObservableObject {
     func editImage(_ item: ClipboardItem) {
         guard item.hasImage, !item.isGIF, let imageData = item.imageData,
               let image = NSImage(data: imageData) else {
-            statusMessage = "This item cannot be edited."
+            statusMessage = String(localized: "This item cannot be edited.")
             return
         }
 
@@ -432,12 +455,12 @@ final class AppState: ObservableObject {
 
     func extractText(_ item: ClipboardItem) {
         guard item.canExtractText, let imageData = item.imageData else {
-            statusMessage = "Text extraction is available for static images only."
+            statusMessage = String(localized: "Text extraction is available for static images only.")
             return
         }
 
         panelController.close()
-        statusMessage = "Extracting text…"
+        statusMessage = String(localized: "Extracting text…")
         let storedOCRText = item.ocrText
 
         Task { [weak self] in
@@ -452,7 +475,7 @@ final class AppState: ObservableObject {
 
             guard let self else { return }
             guard let recognizedText, !recognizedText.isEmpty else {
-                self.statusMessage = "No text was detected in the image."
+                self.statusMessage = String(localized: "No text was detected in the image.")
                 return
             }
 
@@ -465,7 +488,7 @@ final class AppState: ObservableObject {
         monitor.suppressCapture()
         pasteboard.clearContents()
         guard pasteboard.setString(text, forType: .string) else {
-            statusMessage = "The extracted text could not be copied."
+            statusMessage = String(localized: "The extracted text could not be copied.")
             return
         }
 
@@ -476,13 +499,13 @@ final class AppState: ObservableObject {
             imageType: nil,
             fileURLs: []
         ), sourceApplication: sourceApplication)
-        statusMessage = "Extracted text copied to the clipboard."
+        statusMessage = String(localized: "Extracted text copied to the clipboard.")
     }
 
     func preview(_ item: ClipboardItem) {
         panelController.close()
         guard quickLookPreview.show(item: item) else {
-            statusMessage = "No preview is available for this item."
+            statusMessage = String(localized: "No preview is available for this item.")
             return
         }
         statusMessage = nil
@@ -490,26 +513,21 @@ final class AppState: ObservableObject {
 
     func togglePin(_ item: ClipboardItem) {
         let shouldPin = !item.isPinned
-        guard store.setPinned(item.id, pinned: shouldPin) else {
-            if shouldPin {
-                statusMessage = "Maximum of 3 pinned items."
-            }
-            return
-        }
+        _ = store.setPinned(item.id, pinned: shouldPin)
     }
 
     func deleteItem(_ item: ClipboardItem) {
         guard store.remove(item.id) else { return }
-        statusMessage = "Item deleted."
+        statusMessage = String(localized: "Item deleted.")
     }
 
     func saveAsFavorite(_ item: ClipboardItem) {
         guard let text = item.text, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            statusMessage = "Only text items can be saved to the Library."
+            statusMessage = String(localized: "Only text items can be saved to the Library.")
             return
         }
         _ = snippetStore.add(text: text)
-        statusMessage = "Saved to Library."
+        statusMessage = String(localized: "Saved to Library.")
     }
 
     func showFavorites() {
@@ -522,7 +540,7 @@ final class AppState: ObservableObject {
             presentFavorites(targetApplication: resolvedTargetApplication)
             return
         }
-        authenticatePrivateView(reason: "Open the clipboard Library") { [weak self] in
+        authenticatePrivateView(reason: String(localized: "Open the clipboard Library")) { [weak self] in
             self?.presentFavorites(targetApplication: resolvedTargetApplication)
         }
     }
@@ -541,7 +559,7 @@ final class AppState: ObservableObject {
             window.appearance = appearance.nsAppearance
             window.setContentSize(favoritesSize)
             window.minSize = NSSize(width: 420, height: 320)
-            window.title = "Library — clipboard"
+            window.title = String(localized: "Library — OptionV")
             window.titlebarAppearsTransparent = false
             window.titleVisibility = .visible
             window.isOpaque = true
@@ -577,20 +595,20 @@ final class AppState: ObservableObject {
         guard enabled else {
             requireAuthenticationForPrivateViews = false
             UserDefaults.standard.set(false, forKey: Keys.requireAuthenticationForPrivateViews)
-            statusMessage = "History and Library authentication disabled."
+            statusMessage = String(localized: "History and Library authentication disabled.")
             return
         }
 
         guard authenticationService.isAvailable else {
-            statusMessage = "Touch ID or Mac authentication is unavailable."
+            statusMessage = String(localized: "Touch ID or Mac authentication is unavailable.")
             return
         }
 
-        authenticatePrivateView(reason: "Protect clipboard history and Library") { [weak self] in
+        authenticatePrivateView(reason: String(localized: "Protect clipboard history and Library")) { [weak self] in
             guard let self else { return }
             self.requireAuthenticationForPrivateViews = true
             UserDefaults.standard.set(true, forKey: Keys.requireAuthenticationForPrivateViews)
-            self.statusMessage = "History and Library authentication enabled."
+            self.statusMessage = String(localized: "History and Library authentication enabled.")
         }
     }
 
@@ -603,7 +621,7 @@ final class AppState: ObservableObject {
             if success {
                 onSuccess()
             } else {
-                self.statusMessage = "Authentication was cancelled or failed."
+                self.statusMessage = String(localized: "Authentication was cancelled or failed.")
             }
         }
     }
@@ -623,7 +641,7 @@ final class AppState: ObservableObject {
             window.appearance = appearance.nsAppearance
             window.setContentSize(settingsSize)
             window.minSize = settingsSize
-            window.title = "Settings — clipboard"
+            window.title = String(localized: "Settings — OptionV")
             window.titlebarAppearsTransparent = false
             window.titleVisibility = .visible
             window.isOpaque = true
@@ -663,33 +681,33 @@ final class AppState: ObservableObject {
 
     func clearHistory() {
         store.clear()
-        statusMessage = "History cleared."
+        statusMessage = String(localized: "History cleared.")
     }
 
     func clearUnpinnedHistory() {
         let removedCount = store.clearUnpinned()
         statusMessage = removedCount == 0
-            ? "No unpinned items to clear."
-            : "Cleared \(removedCount) unpinned item\(removedCount == 1 ? "" : "s")."
+            ? String(localized: "No unpinned items to clear.")
+            : String(localized: "Cleared \(removedCount) unpinned items.")
     }
 
     func pauseHistory(for duration: ClipboardPauseDuration) {
         monitor.pauseHistory(for: duration)
         isHistoryPaused = true
-        statusMessage = "History capture paused."
+        statusMessage = String(localized: "History capture paused.")
     }
 
     func resumeHistory() {
         monitor.resumeHistory()
         isHistoryPaused = false
-        statusMessage = "History capture resumed."
+        statusMessage = String(localized: "History capture resumed.")
     }
 
     func refreshPauseState() {
         guard isHistoryPaused else { return }
         if !monitor.isPaused {
             isHistoryPaused = false
-            statusMessage = "History capture resumed."
+            statusMessage = String(localized: "History capture resumed.")
         }
     }
 
@@ -736,16 +754,15 @@ final class AppState: ObservableObject {
         clipboardStack.removeAll()
         targetApplication = nil
         isCapturingStack = true
-        statusMessage = "Stack capture started. Copy the items you want to paste in sequence."
+        statusMessage = String(localized: "Stack capture started. Copy the items you want to paste in sequence.")
     }
 
     func finishClipboardStack() {
         isCapturingStack = false
         if clipboardStack.isEmpty {
-            statusMessage = "Stack capture finished without items."
+            statusMessage = String(localized: "Stack capture finished without items.")
         } else {
-            let suffix = clipboardStack.count == 1 ? "" : "s"
-            statusMessage = "Stack ready: \(clipboardStack.count) item\(suffix) queued."
+            statusMessage = String(localized: "Stack ready: \(clipboardStack.count) items queued.")
         }
     }
 
@@ -753,18 +770,18 @@ final class AppState: ObservableObject {
         isCapturingStack = false
         clipboardStack.removeAll()
         targetApplication = nil
-        statusMessage = "Stack cleared."
+        statusMessage = String(localized: "Stack cleared.")
     }
 
     func clearClipboardStack() {
         clipboardStack.removeAll()
         targetApplication = nil
-        statusMessage = "Stack cleared."
+        statusMessage = String(localized: "Stack cleared.")
     }
 
     func pasteNextStackItem() {
         guard !isCapturingStack else {
-            statusMessage = "Finish stack capture before pasting."
+            statusMessage = String(localized: "Finish stack capture before pasting.")
             return
         }
 
@@ -777,7 +794,7 @@ final class AppState: ObservableObject {
               let item = store.item(withID: firstID)
         else {
             targetApplication = nil
-            statusMessage = "The clipboard stack is empty."
+            statusMessage = String(localized: "The clipboard stack is empty.")
             return
         }
 
@@ -790,18 +807,18 @@ final class AppState: ObservableObject {
         if clipboardStack.isEmpty {
             targetApplication = nil
             statusMessage = canPasteAutomatically
-                ? "Last stack item pasted."
-                : "Last stack item is on the clipboard. Press ⌘V to paste."
+                ? String(localized: "Last stack item pasted.")
+                : String(localized: "Last stack item is on the clipboard. Press ⌘V to paste.")
         } else {
             statusMessage = canPasteAutomatically
-                ? "Stack item pasted. (\(clipboardStack.count)) remaining."
-                : "Stack item ready on the clipboard. Press ⌘V, then paste the next item."
+                ? String(localized: "Stack item pasted. (\(clipboardStack.count)) remaining.")
+                : String(localized: "Stack item ready on the clipboard. Press ⌘V, then paste the next item.")
         }
     }
 
     func ignoreNextCopy() {
         monitor.ignoreNextCopy()
-        statusMessage = "Next clipboard copy will be ignored."
+        statusMessage = String(localized: "Next clipboard copy will be ignored.")
     }
 
     func beginRecordingHotKey() {
@@ -814,10 +831,10 @@ final class AppState: ObservableObject {
         isRecordingHotKey = true
         let prompt: String
         switch target {
-        case .history: prompt = "Press a new history combination…"
-        case .gif: prompt = "Press a new GIF combination…"
-        case .stackStart: prompt = "Press a new stack start combination…"
-        case .stackNext: prompt = "Press a new paste next combination…"
+        case .history: prompt = String(localized: "Press a new history combination…")
+        case .gif: prompt = String(localized: "Press a new GIF combination…")
+        case .stackStart: prompt = String(localized: "Press a new stack start combination…")
+        case .stackNext: prompt = String(localized: "Press a new paste next combination…")
         }
         statusMessage = prompt
         recordingMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [weak self] event in
@@ -830,7 +847,7 @@ final class AppState: ObservableObject {
             guard modifiers != 0 else { return event }
             let candidate = HotKeyConfiguration(keyCode: UInt32(event.keyCode), modifiers: modifiers)
             guard !self.isHotKeyInUse(candidate, excluding: target) else {
-                self.statusMessage = "That hotkey is already in use."
+                self.statusMessage = String(localized: "That hotkey is already in use.")
                 return nil
             }
             let registered: Bool
@@ -861,9 +878,9 @@ final class AppState: ObservableObject {
                 }
             }
             if registered {
-                self.statusMessage = "Hotkey set: \(candidate.displayString)"
+                self.statusMessage = String(localized: "Hotkey set: \(candidate.displayString)")
             } else {
-                self.statusMessage = "Combination unavailable."
+                self.statusMessage = String(localized: "Combination unavailable.")
             }
             self.stopRecordingHotKey()
             return nil
@@ -873,7 +890,7 @@ final class AppState: ObservableObject {
     func stopRecordingHotKey() {
         if let recordingMonitor { NSEvent.removeMonitor(recordingMonitor) }
         recordingMonitor = nil
-        let shouldClearPrompt = statusMessage?.hasPrefix("Press a new") == true
+        let shouldClearPrompt = isRecordingHotKey
         recordingHotKeyTarget = nil
         isRecordingHotKey = false
         if shouldClearPrompt {
@@ -889,11 +906,14 @@ final class AppState: ObservableObject {
         switch target {
         case .stackStart:
             stackStartHotKey = nil
-            statusMessage = "Stack start hotkey cleared."
+            statusMessage = String(localized: "Stack start hotkey cleared.")
         case .stackNext:
             stackNextHotKey = nil
-            statusMessage = "Paste next hotkey cleared."
-        case .history, .gif:
+            statusMessage = String(localized: "Paste next hotkey cleared.")
+        case .gif:
+            gifHotKey = nil
+            statusMessage = String(localized: "GIF recording hotkey cleared.")
+        case .history:
             break
         }
     }
@@ -926,7 +946,7 @@ final class AppState: ObservableObject {
 
     func captureAndAnnotate() {
         guard !isCapturingScreenshot else {
-            statusMessage = "A screen capture is already in progress."
+            statusMessage = String(localized: "A screen capture is already in progress.")
             return
         }
 
@@ -934,7 +954,7 @@ final class AppState: ObservableObject {
         annotationEditorController.close()
         settingsWindow?.orderOut(nil)
         isCapturingScreenshot = true
-        statusMessage = "Select an area to capture…"
+        statusMessage = String(localized: "Select an area to capture…")
 
         screenshotCaptureService.captureSelection { [weak self] result in
             guard let self else { return }
@@ -961,7 +981,7 @@ final class AppState: ObservableObject {
         monitor.suppressCapture()
         pasteboard.clearContents()
         guard pasteboard.setData(data, forType: .png) else {
-            statusMessage = "The annotated screenshot could not be copied."
+            statusMessage = String(localized: "The annotated screenshot could not be copied.")
             return
         }
         store.ingest(ClipboardSnapshot(
@@ -971,12 +991,12 @@ final class AppState: ObservableObject {
             imageType: NSPasteboard.PasteboardType.png.rawValue,
             fileURLs: []
         ))
-        statusMessage = "Annotated screenshot copied to the clipboard."
+        statusMessage = String(localized: "Annotated screenshot copied to the clipboard.")
     }
 
     func recordGIF() {
         guard !isRecordingGIF else {
-            statusMessage = "A GIF recording is already in progress."
+            statusMessage = String(localized: "A GIF recording is already in progress.")
             return
         }
 
@@ -984,7 +1004,7 @@ final class AppState: ObservableObject {
         annotationEditorController.close()
         settingsWindow?.orderOut(nil)
         isRecordingGIF = true
-        statusMessage = "Drag to select an area. Release to start recording."
+        statusMessage = String(localized: "Drag to select an area. Release to start recording.")
 
         screenGIFRecorder.start { [weak self] result in
             guard let self else { return }
@@ -1010,19 +1030,19 @@ final class AppState: ObservableObject {
 
     func cancelGIFRecording() {
         guard isRecordingGIF else { return }
-        statusMessage = "Cancelling GIF recording…"
+        statusMessage = String(localized: "Cancelling GIF recording…")
         screenGIFRecorder.cancel()
     }
 
     func finishGIFRecording() {
         guard isRecordingGIF else { return }
-        statusMessage = "Finishing GIF recording…"
+        statusMessage = String(localized: "Finishing GIF recording…")
         screenGIFRecorder.finish()
     }
 
     func saveLatestGIF() {
         guard let item = store.items.first(where: { $0.isGIF }) else {
-            statusMessage = "No GIF is available to save."
+            statusMessage = String(localized: "No GIF is available to save.")
             return
         }
         saveGIF(item)
@@ -1030,7 +1050,7 @@ final class AppState: ObservableObject {
 
     func saveGIF(_ item: ClipboardItem) {
         guard item.isGIF, let data = item.imageData else {
-            statusMessage = "This item is not a GIF."
+            statusMessage = String(localized: "This item is not a GIF.")
             return
         }
 
@@ -1043,9 +1063,9 @@ final class AppState: ObservableObject {
             guard response == .OK, let url = panel.url else { return }
             do {
                 let outputURL = try GIFFileExporter.write(data, to: url)
-                self?.statusMessage = "GIF saved to \(outputURL.lastPathComponent)."
+                self?.statusMessage = String(localized: "GIF saved to \(outputURL.lastPathComponent).")
             } catch {
-                self?.statusMessage = "The GIF could not be saved."
+                self?.statusMessage = String(localized: "The GIF could not be saved.")
             }
         }
     }
@@ -1069,7 +1089,7 @@ final class AppState: ObservableObject {
         monitor.suppressCapture()
         pasteboard.clearContents()
         guard pasteboard.setData(data, forType: gifType) else {
-            statusMessage = "The GIF could not be copied to the clipboard."
+            statusMessage = String(localized: "The GIF could not be copied to the clipboard.")
             return
         }
 
@@ -1080,7 +1100,7 @@ final class AppState: ObservableObject {
             imageType: gifType.rawValue,
             fileURLs: []
         ))
-        statusMessage = "GIF copied to the clipboard. Press ⌘V to paste."
+        statusMessage = String(localized: "GIF copied to the clipboard. Press ⌘V to paste.")
     }
 
     @discardableResult
@@ -1090,7 +1110,7 @@ final class AppState: ObservableObject {
         targetApplicationOverride: NSRunningApplication? = nil
     ) -> Bool {
         guard let payload = ClipboardPasteFormatter.payload(for: item, format: format) else {
-            statusMessage = "\(format.title) is unavailable for this item."
+            statusMessage = String(localized: "\(format.title) is unavailable for this item.")
             return false
         }
 
@@ -1108,19 +1128,20 @@ final class AppState: ObservableObject {
         if !urls.isEmpty { pasteboard.writeObjects(urls as [NSURL]) }
 
         guard let destination = targetApplicationOverride ?? targetApplication else {
-            statusMessage = "Item restored to the clipboard. Press ⌘V to paste."
+            statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
             return true
         }
+        destination.activate(options: [])
         guard AXIsProcessTrusted() else {
-            statusMessage = "Enable Accessibility for automatic paste."
-            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-            _ = AXIsProcessTrustedWithOptions(options)
+            statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
             return true
         }
 
-        destination.activate(options: [])
+        let restoredChangeCount = pasteboard.changeCount
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-            let source = CGEventSource(stateID: .hidSystemState)
+            guard NSWorkspace.shared.frontmostApplication?.processIdentifier == destination.processIdentifier,
+                  pasteboard.changeCount == restoredChangeCount else { return }
+            let source = CGEventSource(stateID: .privateState)
             let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: true)
             let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: false)
             keyDown?.flags = .maskCommand

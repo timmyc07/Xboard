@@ -1,256 +1,48 @@
-# clipboard
+# OptionV
 
-[![CI](https://github.com/Kelsiito/clipboard/actions/workflows/macos.yml/badge.svg)](https://github.com/Kelsiito/clipboard/actions/workflows/macos.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+免費、原生的 macOS 剪貼簿紀錄工具。按 **⌥V（Option + V）** 搜尋複製過的文字、圖片與檔案，選取後貼回原本的應用程式。
 
-<p align="center">
-  <img src="clipboard/Assets.xcassets/AppIcon.appiconset/icon-1024.png" alt="clipboard app icon" width="128">
-</p>
+- SwiftUI + AppKit；macOS 14 以上，Apple Silicon 與 Intel。
+- 繁體中文與英文，跟隨系統語言。
+- 文字、RTF、圖片、GIF 與檔案參照；搜尋、類型／來源篩選、鍵盤選取、快速預覽。
+- 釘選沒有筆數限制。未釘選紀錄預設保留最近 200 筆，可在設定中輸入任意 10 筆以上的數量。
+- 支援自動清除期限、排除 App、暫停紀錄、略過下一次複製。
+- AES-GCM 本機加密，金鑰只存在此 Mac 的鑰匙圈。不需帳號、訂閱或伺服器。
+- 更多工具保留上游的常用文字、連續複製、OCR、截圖標註與 GIF 錄製。這些功能不會預設攔截其他全域快捷鍵。
 
-<p align="center"><strong>Fast, native, open-source clipboard history for macOS.</strong><br>Everything stays on your Mac.</p>
+## 建立與使用
 
-<p align="center">
-  <img src="docs/assets/clipboard-demo.gif" alt="Animated preview of the clipboard history picker" width="720">
-</p>
-
-`clipboard` is a small, local-first clipboard history app for macOS. It lives in the menu bar and opens a compact Windows+V-style picker with `⌘⇧V`.
-
-The project is source-first and intentionally simple: SwiftUI + AppKit, Apple frameworks only, no cloud, analytics, accounts, backend, or external runtime dependencies.
-
-Project site: [clipboard-site-pi.vercel.app](https://clipboard-site-pi.vercel.app/)
-
-> Status: the v1.1–v1.3 product milestones are merged, including Clipboard Stack, Quick Look, local OCR, the permanent Library, and encrypted local storage. The app is not currently signed, notarized, or distributed through the Mac App Store. See the [release checklist](docs/release.md) for the distribution path.
-
-## Features
-
-- Menu-bar-only app; it does not add a normal Dock icon.
-- Configurable global hotkeys: history defaults to `⌘⇧V`, GIF recording defaults to `⌘G`; Clipboard Stack hotkeys are optional and unset by default.
-- Capture and annotate images from the menu-bar menu with the native macOS area selector.
-- Lightweight screenshot editor with freehand drawing, lines, arrows, rectangles, undo, and clear.
-- Record a selected screen area as an animated GIF and copy it directly to the pasteboard and history.
-- Save the latest GIF or any GIF history item to a local `.gif` file.
-- Persistent history for plain text, RTF data, PNG/TIFF/JPEG images, and copied file references.
-- Search-as-you-type across text, OCR text, content kind, and file metadata.
-- Compact history filters for content type, date range, source application, pinned items, and OCR-indexed items.
-- SHA-256 fingerprints to avoid duplicate history entries.
-- 50 stored items by default, configurable from 10 to 200.
-- Up to three pinned items, always shown first.
-- Permanent local text Library with editable titles, collections, tags, search, and filters, independent of history cleanup.
-- AES-GCM encryption for History and Library files, using a 256-bit key stored in this Mac's Keychain.
-- Optional Touch ID or Mac-password authentication before opening History or the Library.
-- Compact picker with three visible rows, scrolling for older items, search filtering, arrow-key navigation, `Enter` to paste, and `Esc` to close.
-- `⌘1`–`⌘9` paste the matching visible picker item; context menus can delete individual items.
-- Clipboard Stack captures subsequent copies in order, then lets you paste the next queued item one at a time.
-- Quick Look previews text, images, GIFs, and existing local file references without changing the stored history or original files.
-- Local OCR indexes text in copied static images and screenshots for private, offline search; `Extract Text & Copy` copies recognized text back to the clipboard and history.
-- Click-outside, close-button, and paste-to-dismiss behavior.
-- Smooth spring entrance animation.
-- Native Liquid Glass surfaces on macOS 26, with a material fallback on macOS 14–25.
-- Settings window for the history, GIF, and optional Clipboard Stack hotkeys, history limit, clearing all or unpinned history, opt-in Launch at Login, and Accessibility status.
-- `Ignore Next Copy` skips one eligible pasteboard snapshot without changing existing history.
-- Privacy controls for ignoring selected applications, pausing capture for 15 minutes, 1 hour, or until resumed, and automatically removing old unpinned items after 1, 7, or 30 days.
-- File bookmarks/references are stored locally; original files are never copied, moved, or deleted by the app.
-
-## Requirements
-
-- macOS 14 or newer.
-- Xcode with a macOS SDK capable of building the project.
-- A Mac where Accessibility permission can be granted if automatic paste is desired.
-- Screen Recording permission may be required when using capture, annotation, or GIF recording.
-
-The project uses Swift 5 mode and has no Swift Package Manager, CocoaPods, or other third-party dependencies.
-
-## Install and run from source
+需要 Xcode 26 或更新版本（含 macOS 26 SDK）。
 
 ```sh
-git clone https://github.com/Kelsiito/clipboard.git
-cd clipboard
-open clipboard.xcodeproj
+./scripts/build-app.sh
+open build/OptionV.app
 ```
 
-In Xcode:
+或開啟 `OptionV.xcodeproj`，選擇 `OptionV` scheme 和 My Mac。
 
-1. Select the `clipboard` scheme and `My Mac` as the run destination.
-2. Build and run.
-3. Look for the clipboard icon in the menu bar. The app is an accessory/menu-bar app, so it is not expected to appear in the Dock.
-4. Open `Settings…` from the menu-bar item to configure hotkeys, history behavior, and optional private-view authentication.
+1. 第一次啟動會打開設定；允許 macOS 提出的剪貼簿存取要求。
+2. 正常複製文字、圖片或檔案，再按 ⌥V。
+3. 輸入關鍵字搜尋，↑↓ 選取，Return 貼上，Esc 關閉。
+4. 在「系統設定 → 隱私權與安全性 → 輔助使用」啟用 OptionV，可自動貼回原 App。未授權時，選取會把內容放回剪貼簿；切回目標 App 按 ⌘V 即可。
+5. ⌥V 會占用該組合原本的特殊字元輸入；若和輸入法衝突，可在設定更改快捷鍵。安全密碼欄位可能阻擋 Option 字元快捷鍵。
 
-The command-line equivalents are:
+`build/OptionV.app` 與 `build/OptionV.zip` 是本機 ad-hoc 簽署版本，沒有 Apple 公證。正式發佈需要 Developer ID 與公證；不需在程式碼或 `.env` 中放入憑證。每次更換本機建置後，macOS 可能要求重新授權輔助使用或鑰匙圈。鑰匙圈授權在背景處理，等待或拒絕授權時不會覆寫既有資料；新項目僅暫存在記憶體，可在設定重試。
+
+## 本機資料
+
+資料保存在 `~/Library/Application Support/OptionV/`，與上游 clipboard App 的資料分開。歷史與常用文字以 AES-GCM 加密，金鑰服務識別為 `io.github.timmyc07.OptionV.local-storage`，不透過 iCloud 同步。刪除鑰匙圈金鑰將無法解密現有紀錄。
+
+釘選不受筆數與期限清除影響。清空紀錄會刪除 App 的歷史，但不會刪除原始檔案或清空系統剪貼簿；檔案紀錄是參照，原始檔案移動或刪除後可能無法取用。所有設定都在 App 內，不需要 `.env`。
+
+## 開發
 
 ```sh
-xcodebuild -project clipboard.xcodeproj -scheme clipboard -destination 'platform=macOS' test
-xcodebuild -project clipboard.xcodeproj -scheme clipboard -destination 'platform=macOS' build
+xcodebuild -project OptionV.xcodeproj -scheme OptionV -destination 'platform=macOS' -derivedDataPath build/DerivedData test
 ```
 
-The local Debug build is unsigned and not notarized. macOS may show a trust warning when launching a build compiled on another Mac; build and run it from Xcode or approve it in System Settings as appropriate for your environment.
+[開源與產品調查、技術決策](docs/research.md) · [技術實作](docs/implementation.md) · [驗證結果與待驗證項目](docs/validation.md)。上游歷史文件保存在 `docs-upstream/`，其中的產品名稱、上架狀態與路線圖屬於上游。
 
-## Usage
+## 授權與來源
 
-1. Copy text, an image, or one or more files normally.
-2. Press `⌘⇧V` to open the history picker.
-3. Select an item with the mouse or arrow keys.
-4. Press `Enter` or click an item to restore it to the pasteboard and paste it into the previously active app.
-
-Use the pin button or an item's context menu to pin/unpin it. Text items can be saved to the permanent Library from their context menu. Image rows also expose an `Edit image` button that opens the annotation editor directly; copying the result creates a new history item. GIF rows expose a download button and `Save GIF…` context-menu action. The picker shows up to three rows at once; scroll for older entries. The menu-bar menu contains `Capture and Annotate…`, `Record GIF…`, `Save Latest GIF…`, `Ignore Next Copy`, `Pause History`, `Start Clipboard Stack`, `Library…`, `Settings…`, and `Quit`. While recording, it also offers `Stop GIF Recording` and `Cancel GIF Recording`.
-
-### Search and keyboard shortcuts
-
-- Press `⌘⇧V`, then type immediately. Results filter without changing persisted history.
-- Use the filter button inside the search field to narrow results by type, date, source app, pinned state, or available OCR text. Reset filters from the same menu.
-- Use `↑`/`↓` to navigate filtered results and `Enter` to paste.
-- Use `⌘1`–`⌘9` to paste the corresponding visible result directly.
-- Right-click an item for `Delete`, `Pin`/`Unpin`, `Paste`, and image editing actions.
-- Use `Extract Text & Copy` from an image item's Smart Paste menu or context menu to run local OCR, copy the recognized text as plain text, and add that text to history. GIFs are excluded from extraction.
-- Click the eye button or choose `Quick Look` from an item's context menu to open the native preview. File previews use the original local reference; image and text previews use temporary app-owned copies that are removed when the preview closes.
-- Use `Ignore Next Copy` when the next clipboard change should not enter history.
-- Use `Pause History` from the menu bar or Settings when capture should stop temporarily.
-- Choose ignored applications and a retention period in Settings. Ignored-app rules apply while those apps are the active source; retention removes only unpinned history.
-
-### Clipboard Stack
-
-1. Choose `Start Clipboard Stack` from the menu bar.
-2. Copy each field in the order you want to paste it. Normal history capture continues as usual.
-3. Choose `Finish Stack Capture` when the sequence is ready.
-4. Focus the destination field and choose `Paste Next Stack Item` for each field. The selected item is restored to the pasteboard and pasted automatically when Accessibility is available; otherwise press `⌘V` manually before advancing.
-5. Choose `Clear Clipboard Stack` to discard the remaining sequence.
-
-The stack is session-only and is not persisted as a second copy of history. Each queued entry points to the existing local history item. Optional hotkeys for `Start Clipboard Stack` and `Paste Next Stack Item` can be configured in Settings; neither has a default, and both can be cleared.
-
-### Quick Look
-
-Quick Look is available from the eye button on every picker row or from the item's context menu. It previews copied text, images, animated GIFs, and files in the native macOS Quick Look panel. Previewing never copies or deletes original files and does not create another history item.
-
-Static images are processed locally with Apple's Vision framework. OCR runs asynchronously after capture, so the image is available immediately; existing images without OCR metadata are indexed after the history loads. Once indexing finishes, search-as-you-type also matches recognized text. OCR data is stored only in the local history file and is never uploaded.
-
-To reuse the recognized text itself, choose `Extract Text & Copy` from a static image's Smart Paste menu or context menu. The extracted plain text replaces the system pasteboard contents, is added as a normal text history item, and can be pasted immediately with `⌘V`. If no text is detected, the image remains unchanged and no text item is created.
-
-### Local Library
-
-Choose `Library…` from the menu-bar menu to open the permanent text library. Save a text history item with `Save to Library…`, or create one with `+`. Library items support editable titles and content, optional collections and tags, metadata search, collection/tag filters, paste, and deletion. They are stored in `~/Library/Application Support/clipboard/snippets.json` and are not affected by the history item limit, retention cleanup, or `Clear History`. Existing Favorites remain compatible and appear as ungrouped Library items. Images and files remain history items and are not converted into Library items.
-
-### Capture and annotate
-
-1. Choose `Capture and Annotate…` from the menu-bar menu, or click `Edit image` on an image in the history picker.
-2. Select an area with the native macOS capture selector.
-3. Draw freehand or add a line, arrow, or rectangle in the editor.
-4. Choose `Copy to Clipboard` to copy the finished PNG and add it to local history.
-
-The original capture is kept in a temporary file only while the editor opens. Cancelling does not add an image to the clipboard or history. The app does not replace or assume any macOS screenshot shortcut; those shortcuts remain controlled by each user's System Settings.
-
-macOS may request Screen Recording permission the first time capture is used. The clipboard history and annotation editor remain local and do not upload screenshots.
-
-### Record GIF
-
-1. Choose `Record GIF…` from the menu-bar menu.
-2. Drag over an area with the clipboard selection overlay and release the pointer; recording starts immediately.
-3. Press the GIF hotkey again (`⌘G` by default) or choose `Stop GIF Recording` from the menu bar when finished. Use `Cancel GIF Recording` to discard it.
-4. The app converts the temporary video locally, places the GIF on the pasteboard, and adds it to history.
-5. Press `⌘V` in the target app, or choose `Save Latest GIF…` from the menu bar to export the latest GIF locally. You can also save an individual GIF from its history-row download button or context menu.
-
-The GIF is converted at 10 fps, capped at 1280 px wide. The temporary video is removed after conversion or cancellation. Export uses the native save panel, appends `.gif` when needed, and never creates a duplicate history item.
-
-### Accessibility and positioning
-
-Accessibility is requested only when needed. It enables two things:
-
-- reading the focused text role and caret/selection bounds so the picker can open beside the active field;
-- restoring the target app and sending `⌘V` for automatic paste.
-
-If Accessibility is denied, the history picker still works and the selected item remains on the clipboard for a manual `⌘V`. Apps that do not expose a real editable text element use a deterministic window-area fallback instead of the mouse position. The Codex desktop app is one such case: macOS exposes its content as a full-window accessibility group, so `clipboard` anchors near the lower composer area rather than claiming an exact caret that it cannot read.
-
-To grant access, open `Settings…` in `clipboard`, choose `Open System Settings`, then enable `clipboard` under **Privacy & Security → Accessibility**. The status in the settings window updates while the app is running.
-
-## Privacy and local storage
-
-Clipboard history can contain sensitive information. `clipboard` keeps it on the local Mac:
-
-- History is stored at `~/Library/Application Support/clipboard/history.json`; Library items are stored in `snippets.json` in the same directory.
-- Both files use an authenticated AES-GCM envelope. Their filenames remain stable for migration compatibility, but their contents are no longer plaintext JSON.
-- A random 256-bit encryption key is created locally and stored as a non-synchronizing, device-only Keychain item available while the Mac is unlocked.
-- Existing plaintext files are migrated only after successful decoding. Authentication or decryption failures preserve the existing file and disable further disk writes for that store during the session.
-- Optional device authentication protects opening the History and Library views; clipboard capture continues in the background and this is not a full process-memory lock.
-- The app creates its data directory with restrictive permissions and writes encrypted data atomically.
-- Text, rich-text data, image payloads, GIF payloads, OCR metadata, and Library metadata remain local.
-- Copied files are represented by local security-scoped bookmarks/references; the original files are not copied into the history and are never deleted by clearing it.
-- Concealed, transient, and autogenerated pasteboard entries are ignored.
-- `Clear History` removes only data owned by `clipboard`; it does not empty the system pasteboard or delete source files.
-- `Clear unpinned` preserves pinned entries and original files.
-- `Ignore Next Copy` consumes one eligible clipboard snapshot; concealed, transient, autogenerated, and empty snapshots do not consume it.
-- Ignored applications and paused capture never enter history and do not consume `Ignore Next Copy`.
-- Retention removes only unpinned items older than the selected age. Pinned items and original files remain untouched.
-- When available, the source application is stored as local bundle ID/name metadata and can be used to filter history. It is never sent anywhere.
-- There is no sync, network service, account, telemetry, advertising, or analytics code in the app.
-
-To remove all locally stored history, use `Clear History` in the settings window. To remove the app and its remaining support data manually, quit the app first and inspect the `~/Library/Application Support/clipboard/` directory before deleting it.
-
-## Project structure
-
-```text
-clipboard.xcodeproj/             Native Xcode project
-clipboard/                       App target
-  clipboardApp.swift             Menu-bar scene and app lifecycle
-  AppState.swift                 Hotkey, settings, paste orchestration
-  PasteboardMonitor.swift        Pasteboard polling and filtering
-  ClipboardStore.swift           Local persistence, source metadata, filters, dedupe, limits, pins, deletion
-  SecureLocalStorage.swift       AES-GCM envelope, Keychain key, device authentication
-  Models.swift                   Codable history and hotkey models
-  GlobalHotKey.swift             Carbon global hotkey registration
-  ClipboardPanelController.swift Picker window, placement, and paste UI
-  SettingsView.swift             Settings UI and Liquid Glass helpers
-  ScreenshotCapture.swift        Native area-capture process and temporary-file lifecycle
-  AnnotationEditor.swift         Screenshot markup UI and PNG rendering
-  ScreenGIFRecorder.swift        Native screen recording and local GIF export
-clipboardTests/                  XCTest coverage for core behavior
-docs/                            Roadmap and implementation history
-.github/workflows/               macOS test/build CI
-```
-
-## Development and validation
-
-There are no generated dependencies to install. Make a focused change, run the unit tests and build, then manually check the affected macOS behavior.
-
-```sh
-xcodebuild -project clipboard.xcodeproj -scheme clipboard -destination 'platform=macOS' test
-xcodebuild -project clipboard.xcodeproj -scheme clipboard -destination 'platform=macOS' build
-git diff --check
-```
-
-The test suite covers encrypted persistence, authenticated encryption, tamper detection, plaintext migration, fail-safe preservation, image payloads, file bookmarks, deduplication, limits, pinning, deletion, clear-unpinned behavior, search, ignore-next-copy behavior, ignored applications, pause state, retention, Library collections/tags and legacy snippet compatibility, static-image extraction eligibility, empty/legacy data, annotation rendering, GIF encoding, hotkey defaults, and panel placement geometry. See [CONTRIBUTING.md](CONTRIBUTING.md) for the manual QA checklist and contribution rules.
-
-## Known limitations
-
-- Automatic paste and exact caret positioning depend on macOS Accessibility permission and on the target app exposing a standard editable text role.
-- Electron/WebView apps may expose only a window or group; the fallback can target the composer area but cannot know an unavailable caret coordinate.
-- File bookmarks can become stale if the original file is moved, deleted, or made inaccessible.
-- New capture and annotate is started from the menu-bar menu; existing static images can also be edited from the history picker. It does not replace macOS screenshot shortcuts.
-- GIF capture is intended for short clips; output is sampled at 10 fps and capped at 1280 px wide.
-- The permanent Library currently stores text only; images and files remain in the regular history.
-- OCR extraction currently supports static image history items; animated GIFs are intentionally excluded.
-- Source-app metadata and history filters are local-only; older history entries without source metadata remain available under `All apps`.
-- Clipboard Stack currently advances one item at a time; batch paste controls remain future work.
-- The current project does not provide cloud sync, signing, notarization, or App Store packaging. These remain tracked in the [roadmap](docs/roadmap.md).
-- Builds from source are currently unsigned and should be treated as development builds.
-- Deleting the `clipboard` encryption key from Keychain makes existing encrypted History and Library files unrecoverable; the app never exports or uploads that key.
-
-The planned follow-up work is tracked in [docs/roadmap.md](docs/roadmap.md).
-
-## Roadmap and community
-
-- [v1.1 Core usability milestone](https://github.com/Kelsiito/clipboard/milestone/1)
-- [GitHub Discussions](https://github.com/Kelsiito/clipboard/discussions) for questions and product feedback
-- [Issues](https://github.com/Kelsiito/clipboard/issues) for reproducible bugs and focused proposals
-- [Contributing guide](CONTRIBUTING.md) for local development and pull requests
-- [Release checklist](docs/release.md) for DMG signing, notarization, and Homebrew follow-up
-- [Distribution issue](https://github.com/Kelsiito/clipboard/issues/9) for the signed DMG/Homebrew track
-- [README demo-media generator](scripts/render-demo-gif.sh) for the privacy-safe synthetic preview above
-
-## Contributing
-
-Bug reports, focused fixes, documentation improvements, and UX feedback are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Do not attach real clipboard history, private text, screenshots containing sensitive data, or credentials to issues or pull requests.
-
-For security-sensitive reports, follow [SECURITY.md](SECURITY.md) instead of opening a public issue.
-
-The application UI and repository documentation are English.
-
-## License
-
-`clipboard` is released under the [MIT License](LICENSE).
+本專案衍生自 MIT 授權的 [Kelsiito/clipboard](https://github.com/Kelsiito/clipboard)，保留原始 Git 歷史、授權和圖示。詳見 [LICENSE](LICENSE) 與 [第三方來源](THIRD_PARTY_NOTICES.md)。

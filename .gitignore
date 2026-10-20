@@ -13,3 +13,10 @@ xcuserdata/
 *.moved-aside
 *.swp
 *.profraw
+
+.env
+.env.*
+*.p12
+*.p8
+*.pem
+*.mobileprovision
