@@ -9,6 +9,7 @@
 - Release 建置成功；Universal executable 同時包含 arm64 與 x86_64。
 - 安裝副本通過 `codesign --verify --deep --strict`。這是 ad-hoc 簽署，未進行 Apple 公證。
 - `git diff --check` 通過。
+- 私人 GitHub 儲存庫已建立，`feat/option-v` 推送成功，遠端提交與本機一致；未提交本機建置產物、鑰匙圈資料或 `.env`。
 
 ## 已涵蓋
 
