@@ -115,7 +115,7 @@
 | :--- | :--- |
 | **執行環境** | macOS 14 以上；提供 Apple Silicon 與 Intel 的 Universal 建置。 |
 | **建置工具** | Xcode 26 或更新版本，含 macOS 26 SDK。 |
-| **取得程式碼** | 目前儲存庫為私人，需要具備存取權限。 |
+| **取得程式碼** | 從 GitHub 複製原始碼，在本機建置。 |
 
 ```sh
 git clone https://github.com/timmyc07/Xboard.git
@@ -143,7 +143,7 @@ open build/Xboard.app
 <details>
 <summary><strong>真的不需要訂閱嗎？</strong></summary>
 
-不需要。Xboard 免費使用，程式碼採 MIT 授權；沒有帳號、付費 SDK 或伺服器依賴。自行建置需要 Xcode 與儲存庫存取權限。
+不需要。Xboard 免費使用，程式碼採 MIT 授權；沒有帳號、付費 SDK 或伺服器依賴。自行建置需要 Xcode。
 
 </details>
 
