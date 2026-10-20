@@ -43,6 +43,7 @@
 - 本機設定已轉移至新的 bundle ID；既有加密歷史與備份逐位元組相同。取得使用者授權後，已將同一鑰匙圈項目的服務名稱改為 Xboard，金鑰與原有存取控制維持不變。
 - `/Users/reikous/Applications/Xboard.app` 已安裝並通過簽署檢查。舊版程式、加密紀錄及設定備份保存在忽略提交的 `build/rename-backup/`。
 - 私人儲存庫與遠端 URL 已更名為 `timmyc07/Xboard`，預設分支為 `feat/xboard`。
+- 使用者已完成 Xboard 的鑰匙圈與輔助使用授權；系統開關與 App 內的「加密儲存」「輔助使用」均確認為已啟用。未進行跨 App 自動貼上的完整實機回歸。
 
 ## 重現方式
 
