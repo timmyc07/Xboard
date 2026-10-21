@@ -1144,7 +1144,7 @@ struct FavoritesView: View {
                         }
                     }
 
-                    Menu("Tag") {
+                    Menu(String(localized: "Tag")) {
                         Button {
                             selectedTag = nil
                         } label: {
@@ -1205,7 +1205,7 @@ struct FavoritesView: View {
                     )
                     .contextMenu {
                         Button(String(localized: "Paste")) { onPaste(snippet) }
-                        Button("Edit") { editingSnippet = snippet }
+                        Button(String(localized: "Edit")) { editingSnippet = snippet }
                         Divider()
                         Button(String(localized: "Delete"), role: .destructive) { _ = store.remove(snippet.id) }
                     }
@@ -1287,7 +1287,7 @@ private struct FavoriteRow: View {
                     .foregroundStyle(Color.primary.opacity(isHovered ? 0.95 : 0.72))
             }
             .buttonStyle(.plain)
-            .help("Edit")
+            .help(String(localized: "Edit"))
             .accessibilityLabel(String(localized: "Edit favorite"))
 
             Button(role: .destructive, action: onDelete) {

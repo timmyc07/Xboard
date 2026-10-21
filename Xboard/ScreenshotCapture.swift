@@ -16,7 +16,7 @@ enum ScreenshotCaptureError: LocalizedError {
         case .invalidImage:
             return String(localized: "The captured image could not be opened.")
         case .launchFailed(let error):
-            return "Screen capture could not start: \(error.localizedDescription)"
+            return String(localized: "Screen capture could not start: \(error.localizedDescription)")
         }
     }
 }

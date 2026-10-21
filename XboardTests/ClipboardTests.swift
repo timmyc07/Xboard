@@ -150,6 +150,35 @@ final class ClipboardTests: XCTestCase {
         XCTAssertEqual(bundle.localizedString(forKey: "No matches", value: nil, table: nil), "沒有符合的項目")
     }
 
+    func testSystemLanguageMatchingSupportsRegionalPreferences() {
+        let localizations = Bundle.main.localizations
+        XCTAssertEqual(Bundle.main.developmentLocalization, "en")
+        XCTAssertEqual(Bundle.preferredLocalizations(from: localizations, forPreferences: ["en-US", "zh-Hant-TW"]).first, "en")
+        XCTAssertEqual(Bundle.preferredLocalizations(from: localizations, forPreferences: ["zh-Hant-TW", "en-US"]).first, "zh-Hant")
+        XCTAssertEqual(Bundle.preferredLocalizations(from: localizations, forPreferences: ["ja-JP", "zh-Hant-TW", "en-US"]).first, "zh-Hant")
+        XCTAssertEqual(Bundle.preferredLocalizations(from: localizations, forPreferences: ["ja-JP"]).first, "en")
+    }
+
+    func testInterfaceFollowsPreferredLanguage() throws {
+        let localization = try XCTUnwrap(Bundle.preferredLocalizations(
+            from: Bundle.main.localizations,
+            forPreferences: Locale.preferredLanguages
+        ).first)
+        XCTAssertEqual(Bundle.main.preferredLocalizations.first, localization)
+        let isChinese = localization == "zh-Hant"
+        XCTAssertEqual(String(localized: "Open history"), isChinese ? "開啟剪貼簿紀錄" : "Open history")
+        XCTAssertEqual(AnnotationTool.allCases.map(\.title), isChinese ? ["繪圖", "直線", "箭頭", "矩形"] : ["Draw", "Line", "Arrow", "Rectangle"])
+        XCTAssertEqual(ClipboardHistoryTypeFilter.gif.title, isChinese ? "GIF" : "GIFs")
+        XCTAssertEqual(ClipboardSnippet.suggestedTitle(for: " \n "), isChinese ? "常用文字" : "Favorite")
+
+        let error = NSError(domain: "XboardTests", code: 1, userInfo: [NSLocalizedDescriptionKey: "Synthetic failure"])
+        XCTAssertEqual(ScreenshotCaptureError.launchFailed(error).errorDescription, isChinese ? "無法開始擷取畫面：Synthetic failure" : "Screen capture could not start: Synthetic failure")
+        XCTAssertEqual(ScreenGIFRecordingError.launchFailed(error).errorDescription, isChinese ? "無法開始螢幕錄影：Synthetic failure" : "Screen recording could not start: Synthetic failure")
+        XCTAssertEqual(ScreenGIFRecordingError.readerFailed(error).errorDescription, isChinese ? "無法讀取螢幕錄影：Synthetic failure" : "The screen recording could not be read: Synthetic failure")
+        XCTAssertEqual(ScreenGIFRecordingError.readerFailed(nil).errorDescription, isChinese ? "無法讀取螢幕錄影：未知錯誤" : "The screen recording could not be read: unknown error")
+        XCTAssertEqual(ScreenGIFRecordingError.captureFailed(7).errorDescription, isChinese ? "螢幕錄影失敗（代碼 7）。請檢查螢幕錄影權限後再試一次。" : "Screen recording failed (code 7). Check Screen Recording permission and try again.")
+    }
+
     func testSnapshotFingerprintIsStable() {
         let first = ClipboardSnapshot(text: "hello", richTextData: nil, imageData: nil, imageType: nil, fileURLs: [])
         let second = ClipboardSnapshot(text: "hello", richTextData: nil, imageData: nil, imageType: nil, fileURLs: [])

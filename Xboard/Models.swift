@@ -44,7 +44,7 @@ enum ClipboardHistoryTypeFilter: String, CaseIterable, Hashable, Identifiable {
         case .all: return String(localized: "All types")
         case .text: return String(localized: "Text")
         case .image: return String(localized: "Images")
-        case .gif: return "GIFs"
+        case .gif: return String(localized: "GIFs")
         case .files: return String(localized: "Files")
         case .mixed: return String(localized: "Mixed")
         }
@@ -399,9 +399,9 @@ struct ClipboardSnippet: Codable, Equatable, Identifiable {
         let firstLine = text
             .split(maxSplits: 1, whereSeparator: { $0.isNewline })
             .first
-            .map(String.init) ?? "Favorite"
+            .map(String.init) ?? String(localized: "Favorite")
         let trimmed = firstLine.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return "Favorite" }
+        guard !trimmed.isEmpty else { return String(localized: "Favorite") }
         return String(trimmed.prefix(48))
     }
 

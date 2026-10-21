@@ -25,6 +25,8 @@ ClipboardPanelController remembers the destination before opening the picker. Se
 
 All preferences are in the app. New installs open Settings. Clipboard read consent is handled by macOS. Accessibility is optional: the picker displays an explicit enable action when access is missing, and Settings exposes the same action. Clicking it requests the macOS permission prompt and opens the Accessibility pane. The user grants access; capture and manual paste remain available without it. Screen Recording is requested only by optional capture/recording tools. Login at startup is opt-in.
 
+Interface language follows [macOS language preferences](https://developer.apple.com/localization/) through the native String Catalog and Bundle localization selection. English is the development language and fallback; Traditional Chinese is also supported. Regional preferences such as `en-US` and `zh-Hant-TW` resolve to the corresponding supported language. macOS per-app language preferences are respected. Relaunch Xboard after changing language preferences.
+
 ## Acceptance checks
 
 - Compile and XCTest on the installed Xcode/macOS.

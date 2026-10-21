@@ -24,15 +24,15 @@ enum ScreenGIFRecordingError: LocalizedError {
         case .noVideoTrack:
             return String(localized: "The screen recording did not contain a video track.")
         case .readerFailed(let error):
-            return "The screen recording could not be read: \(error?.localizedDescription ?? "unknown error")"
+            return String(localized: "The screen recording could not be read: \(error?.localizedDescription ?? String(localized: "unknown error"))")
         case .noFrames:
             return String(localized: "The screen recording did not contain any frames.")
         case .couldNotCreateGIF:
             return String(localized: "The GIF could not be created.")
         case .launchFailed(let error):
-            return "Screen recording could not start: \(error.localizedDescription)"
+            return String(localized: "Screen recording could not start: \(error.localizedDescription)")
         case .captureFailed(let status):
-            return "Screen recording failed (code \(status)). Check Screen Recording permission and try again."
+            return String(localized: "Screen recording failed (code \(status)). Check Screen Recording permission and try again.")
         }
     }
 }

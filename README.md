@@ -1,121 +1,121 @@
 <div align="center">
 
-<img src="Xboard/Assets.xcassets/AppIcon.appiconset/icon-128.png" alt="Xboard 圖示" width="80" height="80" />
+<img src="Xboard/Assets.xcassets/AppIcon.appiconset/icon-128.png" alt="Xboard icon" width="80" height="80" />
 
 # Xboard
 
-### 複製過的靈感，隨時接得回來。
+### Keep your flow. Find what you copied.
 
-專為 macOS 打造的原生剪貼簿工具。<br />
-按下 **⌥V**，找回文字、圖片與檔案，接著完成手上的事。
+A native clipboard manager built for macOS.<br />
+Press **⌥V** to bring back text, images, and files, then get on with your work.
 
-**免費使用** · **本機加密** · **繁體中文 / English** · **MIT 授權**
+**Free to use** · **Locally encrypted** · **English / Traditional Chinese** · **MIT licensed**
 
-[開始使用](#quick-start)　·　[探索功能](#features)　·　[隱私設計](#privacy)　·　[常見問題](#faq)
+[Get started](#quick-start)　·　[Explore features](#features)　·　[Privacy](#privacy)　·　[FAQ](#faq)
 
 </div>
 
 <p align="center">
-  <img src="docs/assets/xboard-hero.svg" alt="Xboard 產品示意：用 ⌥V 開啟面板，搜尋並選取先前複製的內容。" width="1280" />
+  <img src="docs/assets/xboard-hero.svg" alt="Xboard product illustration: open the panel with ⌥V, search, and select something you copied earlier." width="1280" />
 </p>
 
-<p align="center"><sub>產品介面示意，使用虛構內容；實際外觀會依 macOS 版本與設定而異。</sub></p>
+<p align="center"><sub>Product illustration with fictional content. Actual appearance varies with your macOS version and settings.</sub></p>
 
-## 從「剛剛那段在哪裡」，到繼續你的下一步。
+## From “where did I copy that?” to your next step.
 
-寫到一半的文案、查資料時複製的連結、準備貼進簡報的圖片——讓 Xboard 幫你留住，想用的時候再叫出來。少一次切回原頁面，就能多留一點注意力給真正想完成的事。
+A draft you were writing, a link from your research, an image for your presentation: Xboard keeps them within reach. Spend less time reopening pages and more time on what you wanted to finish.
 
-| **01　照常複製** | **02　按下 ⌥V** | **03　選取、貼上** |
+| **01　Copy as usual** | **02　Press ⌥V** | **03　Select and paste** |
 | :--- | :--- | :--- |
-| 沿用熟悉的 ⌘C，背景保存複製紀錄。 | 輸入關鍵字，或依類型、來源與日期篩選。 | ↑↓ 選取、Return 貼回原 App，Esc 關閉。 |
+| Keep using ⌘C. Xboard saves your clipboard history in the background. | Search by keyword or filter by type, source app, and date. | Select with ↑↓, press Return to paste into the previous app, or Esc to close. |
 
-<sub>自動貼上需要 macOS「輔助使用」授權；未授權時，選取後仍可手動按 ⌘V。</sub>
+<sub>Automatic paste requires macOS Accessibility permission. Without it, select an item and paste manually with ⌘V.</sub>
 
 <a id="features"></a>
 
-## 你需要的內容，比你記得的更好找。
+## Easier to find than to remember.
 
 <table>
   <tr>
     <td width="50%" valign="top">
-      <h3>一個快捷鍵，找回上一段工作</h3>
-      <p>預設 ⌥V 開啟緊湊面板，輸入即搜尋。文字、圖片、GIF 與檔案參照，都能在同一份歷史中找到。</p>
+      <h3>One shortcut to pick up where you left off</h3>
+      <p>Open a compact panel with ⌥V and search as you type. Text, images, GIFs, and file references share one history.</p>
     </td>
     <td width="50%" valign="top">
-      <h3>常用內容，留在最順手的位置</h3>
-      <p>釘選不設筆數上限，也不受歷史期限清除影響。把常用回覆、程式片段與工作素材留在手邊。</p>
+      <h3>Keep everyday content close</h3>
+      <p>Pin as many items as you need. Pinned items stay outside history limits and retention cleanup, so common replies, code snippets, and work materials remain handy.</p>
     </td>
   </tr>
   <tr>
     <td valign="top">
-      <h3>從搜尋到貼上，全程用鍵盤</h3>
-      <p>方向鍵選取、Return 貼上、⌘1–⌘9 快速選取可見項目。支援純文字貼上、Markdown 連結與 JSON 整理。</p>
+      <h3>From search to paste, all by keyboard</h3>
+      <p>Use the arrow keys to select, Return to paste, and ⌘1–⌘9 to choose visible items. Paste as plain text, create Markdown links, or format JSON.</p>
     </td>
     <td valign="top">
-      <h3>圖片裡的文字，也能找到</h3>
-      <p>靜態圖片可在本機辨識文字，納入搜尋或擷取後複製。辨識過程不需把圖片交給雲端服務。</p>
+      <h3>Find the words inside images</h3>
+      <p>Recognize text in static images locally, include it in search, or extract and copy it. Your images never need to go to a cloud service for OCR.</p>
     </td>
   </tr>
   <tr>
     <td valign="top">
-      <h3>配合你的 Mac，也配合你的習慣</h3>
-      <p>SwiftUI 與 AppKit 原生介面，支援深色／淺色外觀、繁體中文與英文。快捷鍵、保留筆數與登入啟動都能自行設定。</p>
+      <h3>At home on your Mac</h3>
+      <p>A native SwiftUI and AppKit interface with light and dark appearances. The interface follows your macOS language preferences, with English and Traditional Chinese support. Customize shortcuts, history limits, and launch at login.</p>
     </td>
     <td valign="top">
-      <h3>要留多少，由你決定</h3>
-      <p>預設保留最近 200 筆未釘選紀錄，可調整筆數與自動清除期限；也能暫停記錄、排除 App，或略過下一次複製。</p>
+      <h3>You decide what stays</h3>
+      <p>Keep the latest 200 unpinned items by default, adjust the count and retention period, pause capture, exclude apps, or skip the next copy.</p>
     </td>
   </tr>
 </table>
 
-### 讓每天重複的小動作，少一點重來。
+### Less repetition in your everyday work.
 
-| 你的工作 | Xboard 幫你接住的內容 |
+| Your work | What Xboard keeps within reach |
 | :--- | :--- |
-| **寫作與溝通** | 找回不同版本的文案、剛複製的引用，將常用回覆存進文字資料庫。 |
-| **開發與除錯** | 重用程式片段與連結，整理可解析的 JSON，依序貼出連續複製的內容。 |
-| **設計與研究** | 快速預覽圖片、搜尋截圖中的文字，找回來自不同 App 的參考素材。 |
-| **資料與文件整理** | 依來源、日期與類型縮小範圍，從複製過的資料中找回需要的一筆。 |
+| **Writing and communication** | Recover draft versions and recent quotes, or save common replies in the text Library. |
+| **Development and debugging** | Reuse code and links, format valid JSON, and paste a sequence of copied items in order. |
+| **Design and research** | Preview images, search text in screenshots, and find reference material from different apps. |
+| **Data and documents** | Narrow results by source, date, and type to find the item you need. |
 
 <details>
-<summary><strong>打開「更多工具」，還有這些順手的功能</strong></summary>
+<summary><strong>More useful features under “More tools”</strong></summary>
 
-- **常用文字資料庫**：儲存標題、內容、集合與標籤，獨立於歷史清理保留。
-- **連續複製**：依複製順序建立佇列，再逐筆貼出。
-- **快速預覽**：檢視文字、圖片、GIF 與可存取的原始檔案。
-- **截圖標註**：使用畫筆、箭頭與框線，把重點圈出來。
-- **GIF 錄製**：選取畫面區域，在本機製作短片段 GIF。
+- **Text Library**: Save titles, content, collections, and tags separately from history cleanup.
+- **Clipboard Stack**: Queue items in copy order and paste them one at a time.
+- **Quick Look**: Preview text, images, GIFs, and accessible original files.
+- **Screenshot annotation**: Highlight details with freehand drawing, arrows, and rectangles.
+- **GIF recording**: Select a screen area and create a short GIF locally.
 
-這些工具收在選單內；預設僅啟用 ⌥V 全域快捷鍵。截圖與錄製功能可能需要 macOS 螢幕錄影授權。
+These tools live in the menu. Only the ⌥V global shortcut is enabled by default. Screenshot and recording features may require macOS Screen Recording permission.
 
 </details>
 
 <a id="privacy"></a>
 
-## 你的剪貼簿，留在你的 Mac。
+## Your clipboard stays on your Mac.
 
-工作內容可以隨手複製，資料要怎麼保存也應該清楚。Xboard 不需要帳號、訂閱或後端服務，沒有廣告與分析追蹤程式碼。
+You should know how your copied content is stored. Xboard needs no account, subscription, or backend service, and includes no advertising or analytics tracking code.
 
-| 設計 | 對你意味著什麼 |
+| Design | What it means for you |
 | :--- | :--- |
-| **AES-GCM 本機加密** | 歷史與常用文字加密後寫入磁碟，金鑰保存在這台 Mac 的登入鑰匙圈。 |
-| **本機處理** | 搜尋、OCR 與內容整理在本機完成，沒有雲端同步或內容上傳流程。 |
-| **可控制的記錄範圍** | 排除特定 App、暫停記錄、略過下一次複製，並忽略有標記的敏感與暫時性內容。 |
-| **清理不影響原始檔案** | 檔案歷史保存參照；清空歷史不會刪除原始檔案或清空系統剪貼簿。 |
+| **AES-GCM local encryption** | History and Library content are encrypted on disk. The key stays in this Mac's login Keychain. |
+| **Local processing** | Search, OCR, and content formatting run locally. There is no cloud sync or content upload workflow. |
+| **Control over capture** | Exclude apps, pause history, skip the next copy, and ignore content marked as sensitive or transient. |
+| **Cleanup preserves original files** | File history stores references. Clearing history does not delete original files or clear the system clipboard. |
 
-<sub>未標記的敏感文字仍可能進入歷史；可在設定中排除對應 App 或暫停記錄。詳見 [安全說明](SECURITY.md)。</sub>
+<sub>Unmarked sensitive text may still enter history. Exclude the relevant app or pause capture in Settings. See the [security notes](SECURITY.md).</sub>
 
 <a id="quick-start"></a>
 
-## 讓下一次複製，開始更有用。
+## Make your next copy more useful.
 
-### 從原始碼開始
+### Build from source
 
-| | 需求 |
+| | Requirement |
 | :--- | :--- |
-| **執行環境** | macOS 14 以上；提供 Apple Silicon 與 Intel 的 Universal 建置。 |
-| **建置工具** | Xcode 26 或更新版本，含 macOS 26 SDK。 |
-| **取得程式碼** | 從 GitHub 複製原始碼，在本機建置。 |
+| **Runtime** | macOS 14 or later. Universal builds include Apple Silicon and Intel. |
+| **Build tools** | Xcode 26 or later with the macOS 26 SDK. |
+| **Source** | Clone from GitHub and build locally. |
 
 ```sh
 git clone https://github.com/timmyc07/Xboard.git
@@ -124,91 +124,97 @@ cd Xboard
 open build/Xboard.app
 ```
 
-也可以用 Xcode 開啟 `Xboard.xcodeproj`，選擇 **Xboard → My Mac** 建置執行。
+You can also open `Xboard.xcodeproj` in Xcode and select **Xboard → My Mac** to build and run.
 
-**目前提供原始碼與本機建置腳本，尚未發布經 Apple 公證的安裝包。** 腳本會產生 `build/Xboard.app` 與 `build/Xboard.zip`，採用 ad-hoc 簽署。
+**Source code and a local build script are currently available; an Apple-notarized installer has not been released.** The script produces `build/Xboard.app` and `build/Xboard.zip` with ad-hoc signing.
 
-### 第一次使用，完成這三步
+### Three steps for your first launch
 
-1. **打開 Xboard**：依 macOS 提示允許剪貼簿與鑰匙圈存取，讓歷史可以加密保存。
-2. **啟用自動貼上**：點選面板的「啟用自動貼上」，在「系統設定 → 隱私權與安全性 → 輔助使用」開啟 Xboard。
-3. **複製一段內容，按 ⌥V**：搜尋、選取，接著回到你的工作。
+1. **Open Xboard**: Allow clipboard and Keychain access when macOS prompts so your history can be saved with encryption.
+2. **Enable automatic paste**: Click “Enable automatic paste…” in the panel, then enable Xboard under **System Settings → Privacy & Security → Accessibility**.
+3. **Copy something and press ⌥V**: Search, select, and return to your work.
 
-<sub>設定都在 App 內完成，不需要建立 `.env`。更換本機建置後，macOS 可能再次要求鑰匙圈或輔助使用授權。</sub>
+<sub>All settings are in the app; no `.env` file is required. Replacing a local build may cause macOS to request Keychain or Accessibility permission again.</sub>
+
+### Interface language
+
+Xboard follows your macOS preferred language order. It supports **English** and **Traditional Chinese**, with English as the fallback when none of your preferred languages is supported. Regional preferences such as English (US) and Traditional Chinese (Taiwan) select the corresponding language automatically.
+
+Change your preferences in **System Settings → General → Language & Region**, then quit and reopen Xboard. A macOS per-app language preference for Xboard takes precedence over the system language order.
 
 <a id="faq"></a>
 
-## 使用前，你可能想知道
+## A few things to know
 
 <details>
-<summary><strong>真的不需要訂閱嗎？</strong></summary>
+<summary><strong>Does it really need no subscription?</strong></summary>
 
-不需要。Xboard 免費使用，程式碼採 MIT 授權；沒有帳號、付費 SDK 或伺服器依賴。自行建置需要 Xcode。
+Yes. Xboard is free to use and MIT licensed, with no account, paid SDK, or server dependency. Building it yourself requires Xcode.
 
 </details>
 
 <details>
-<summary><strong>為什麼能記錄，點選後卻沒有自動貼上？</strong></summary>
+<summary><strong>Why does history work, but selecting an item does not paste automatically?</strong></summary>
 
-記錄剪貼簿與自動送出 ⌘V 使用不同權限。請先在「輔助使用」開啟 Xboard；面板下方也有直接前往的入口。未授權時，選取內容仍會放回剪貼簿，可切回目標 App 手動按 ⌘V。
+Clipboard capture and sending ⌘V automatically require different permissions. Enable Xboard under Accessibility; the panel also provides a direct link. Without permission, selecting an item still restores it to the clipboard, so you can switch to the destination app and press ⌘V manually.
 
-自動貼上與游標定位也取決於目標 App 的焦點及輔助使用支援。
-
-</details>
-
-<details>
-<summary><strong>可以更改快捷鍵與歷史筆數嗎？</strong></summary>
-
-可以。預設快捷鍵為 ⌥V，未釘選歷史預設保留 200 筆，可輸入任意 10 筆以上的數量。釘選不計入上限。大量圖片會增加記憶體與磁碟使用量，請依工作需求調整。
-
-⌥V 會占用這組按鍵原本的特殊字元輸入；若與輸入法衝突，可在設定更換。安全密碼欄位可能阻擋此類快捷鍵。
+Automatic paste and caret positioning also depend on the destination app's focus and Accessibility support.
 
 </details>
 
 <details>
-<summary><strong>內容存在哪裡？能跨裝置同步嗎？</strong></summary>
+<summary><strong>Can I change the shortcut and history limit?</strong></summary>
 
-歷史與常用文字保存在 `~/Library/Application Support/Xboard/`，使用 AES-GCM 加密。金鑰位於本機鑰匙圈，不透過 iCloud 同步；目前沒有跨裝置同步功能。刪除鑰匙圈金鑰會讓既有紀錄無法解密。
+Yes. The default shortcut is ⌥V, and the default limit is 200 unpinned items. You can enter any count of 10 or more. Pinned items do not count toward the limit. Large image histories use more memory and disk space, so choose a limit that suits your work.
 
-檔案紀錄是原始檔案的參照，移動、刪除或失去存取權限後可能無法使用。
+⌥V replaces the special character normally entered by that key combination. Change it in Settings if it conflicts with your input method. Secure password fields may block this kind of shortcut.
+
+</details>
+
+<details>
+<summary><strong>Where is my content stored? Does it sync between devices?</strong></summary>
+
+History and Library content are stored in `~/Library/Application Support/Xboard/` with AES-GCM encryption. The key stays in the local Keychain and does not sync through iCloud. Cross-device sync is not currently available. Deleting the Keychain key makes existing records unreadable.
+
+File records reference the originals. Moving or deleting those files, or losing access to them, may make the references unusable.
 
 </details>
 
 ---
 
-## 原生，從介面到實作。
+## Native, from interface to implementation.
 
 **Swift · SwiftUI · AppKit · CryptoKit · Vision**
 
-Xboard 使用 Apple 平台框架，沒有第三方執行期套件。macOS 26 支援原生 Liquid Glass，較早版本使用標準半透明背景。
+Xboard uses Apple platform frameworks with no third-party runtime packages. macOS 26 supports native Liquid Glass; earlier versions use standard translucent materials.
 
 <details>
-<summary><strong>給開發者：建置、架構與驗證</strong></summary>
+<summary><strong>For developers: build, architecture, and validation</strong></summary>
 
-專案使用 Swift 5 語言模式。測試指令：
+The project uses Swift 5 language mode. Run the tests with:
 
 ```sh
 xcodebuild -project Xboard.xcodeproj -scheme Xboard \
   -destination 'platform=macOS' -derivedDataPath build/DerivedData test
 ```
 
-- [技術實作與資料流程](docs/implementation.md)
-- [開源與產品調查、技術決策](docs/research.md)
-- [驗證結果與待驗證環境](docs/validation.md)
-- [參與開發](CONTRIBUTING.md)
+- [Implementation and data flow](docs/implementation.md)
+- [Open-source research and technical decisions](docs/research.md) (Traditional Chinese)
+- [Validation results and environments still to verify](docs/validation.md) (Traditional Chinese)
+- [Contributing](CONTRIBUTING.md)
 
-目前已完成本機 Universal 建置；Intel 與 macOS 14–25 的執行環境、跨 App 自動貼上及長時間資源使用，仍需進一步實機驗證。
+Local Universal builds have been completed. Runtime checks on Intel and macOS 14–25, cross-app automatic paste, and long-running resource use still need further testing on real hardware.
 
 </details>
 
-### 授權與致謝
+### License and acknowledgments
 
-Xboard 衍生自 MIT 授權的 [Kelsiito/clipboard](https://github.com/Kelsiito/clipboard)，保留原始 Git 歷史、授權與 App 圖示。產品主視覺為 Xboard 製作的示意素材。詳見 [LICENSE](LICENSE) 與 [第三方來源](THIRD_PARTY_NOTICES.md)。上游歷史文件保存在 `docs-upstream/`。
+Xboard is derived from the MIT-licensed [Kelsiito/clipboard](https://github.com/Kelsiito/clipboard), retaining the original Git history, license, and app icon. The product hero is an illustration created for Xboard. See [LICENSE](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md). Historical upstream documents are preserved in `docs-upstream/`.
 
 <div align="center">
 
-**把剛剛複製的好內容，留給下一次需要的自己。**
+**Keep what you copied for the next time you need it.**
 
-[開始使用 Xboard ↑](#quick-start)
+[Get started with Xboard ↑](#quick-start)
 
 </div>

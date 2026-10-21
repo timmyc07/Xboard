@@ -11,10 +11,10 @@ enum AnnotationTool: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .draw: return "Draw"
-        case .line: return "Line"
-        case .arrow: return "Arrow"
-        case .rectangle: return "Rectangle"
+        case .draw: return String(localized: "Draw")
+        case .line: return String(localized: "Line")
+        case .arrow: return String(localized: "Arrow")
+        case .rectangle: return String(localized: "Rectangle")
         }
     }
 
@@ -258,7 +258,7 @@ struct AnnotationEditorView: View {
                 .tint(document.selectedTool == tool ? .accentColor : nil)
             }
             Spacer()
-            Button("Undo", systemImage: "arrow.uturn.backward") {
+            Button(String(localized: "Undo"), systemImage: "arrow.uturn.backward") {
                 document.undo()
             }
             .disabled(document.marks.isEmpty)
