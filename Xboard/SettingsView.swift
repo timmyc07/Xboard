@@ -2,30 +2,27 @@ import ApplicationServices
 import SwiftUI
 
 extension View {
-    @ViewBuilder
     func clipboardGlassSurface<S: Shape>(in shape: S, material: ClipboardMaterial = .liquidGlass) -> some View {
-        if material == .liquidGlass, #available(macOS 26.0, *) {
-            glassEffect(.regular, in: shape)
-        } else {
-            background(.regularMaterial, in: shape)
-        }
+        modifier(ClipboardGlassSurface(shape: shape, material: material))
     }
+}
+
+private struct ClipboardGlassSurface<S: Shape>: ViewModifier {
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    let shape: S
+    let material: ClipboardMaterial
 
     @ViewBuilder
-    func clipboardGlassButtonStyle() -> some View {
-        if #available(macOS 26.0, *) {
-            buttonStyle(.glass)
+    func body(content: Content) -> some View {
+        if material == .standard || reduceTransparency || contrast == .increased {
+            content.background(Color(nsColor: .windowBackgroundColor), in: shape)
+        } else if #available(macOS 26.0, *) {
+            content
+                .background(Color(nsColor: .windowBackgroundColor).opacity(0.85), in: shape)
+                .glassEffect(.regular, in: shape)
         } else {
-            buttonStyle(.borderless)
-        }
-    }
-
-    @ViewBuilder
-    func clipboardGlassEntranceTransition(material: ClipboardMaterial = .liquidGlass) -> some View {
-        if material == .liquidGlass, #available(macOS 26.0, *) {
-            glassEffectTransition(.materialize)
-        } else {
-            self
+            content.background(.regularMaterial, in: shape)
         }
     }
 }

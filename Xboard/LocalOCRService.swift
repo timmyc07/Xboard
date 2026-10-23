@@ -1,10 +1,9 @@
-import ImageIO
+import AppKit
 import Vision
 
 enum LocalOCRService {
     static func recognize(imageData: Data) -> String? {
-        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
-              let image = CGImageSourceCreateImageAtIndex(source, 0, nil)
+        guard let image = NSImage(data: imageData)?.cgImage(forProposedRect: nil, context: nil, hints: nil)
         else { return nil }
 
         let request = VNRecognizeTextRequest()

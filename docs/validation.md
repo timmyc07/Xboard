@@ -54,6 +54,21 @@
 - Release Universal 建置成功，包含 arm64 與 x86_64；`codesign --verify --deep --strict` 通過。
 - README 本機連結、翻譯格式參數與 `git diff --check` 通過。未重新進行所有畫面的人工操作、Intel 或舊版 macOS 實機驗證。
 
+## 2026-10-23：原生介面、圖片與鍵盤操作
+
+- 環境：macOS 26.6.2、Apple Silicon；Xcode 27.1、macOS SDK 27.0，Swift 5 語言模式；部署目標維持 macOS 14。
+- 最終完整 XCTest：**73 項通過、0 失敗**。新增圖片格式驗證與原碼保存、SVG 背景 OCR、小工作區尺寸、負座標／上方螢幕配置等回歸測試。
+- Release Universal 建置成功，含 arm64 與 x86_64；產物及安裝副本均通過 `codesign --verify --deep --strict`。
+- 用同一份產品 View 與隔離合成資料開啟原生驗證視窗，檢查淺／深色、標準／玻璃、520 × 420 與 456 × 336 尺寸。寬圖與長圖完整等比例顯示，清單捲動與底列分隔正常。
+- 實際 UI 斷言確認：搜尋欄聚焦時 ⌘4 能選取第四筆；搜尋後 ⌘1 使用目前結果；無結果時不貼出舊項目；↑↓／Return、Esc 清除與關閉、釘選、篩選筆數與「無符合結果」正常。
+- ⌘數字改用原生鍵盤捷徑，並在觸發時重新解析搜尋／篩選結果，避免控制項保留舊動作時貼錯內容。
+- 以安裝版原生選單開啟真正 NSPanel，確認繁中搜尋、空狀態、底列及圓角無外層裁切。
+- 最終版本已安裝到 `/Users/reikous/Applications/Xboard.app`，執行檔與 `build/Xboard.app` 的 SHA-256 相同；更新前 App 備份在忽略提交的 `build/ui-refinement-backup/`。
+- 本次重新簽署後，安裝版顯示等待鑰匙圈授權、輔助使用尚未授權；未代操作系統安全視窗。加密歷史未讀出前，真實歷史與跨 App 自動貼上不列為此次已驗證。合成測試的 ClipboardStore 使用獨立暫存目錄，未直接寫入使用者歷史。
+- 未實測 macOS 14–25、Intel 實機、不同輸入法、VoiceOver 完整流程或系統「減少透明度／提高對比」開關；這些外觀偏好的處理已實作並編譯通過。舊的損壞圖片資料不會憑空重建。
+- 新增變更未產生 Swift 編譯警告；完整 Release 仍有既有 GIF 影片讀取 API 的 deprecated 警告，錄影流程本次未重構。
+- `git diff --check` 通過。沒有新增執行期依賴，未修改或提交 `.env`、金鑰及本機建置產物。介面決策與文件版本界線見[介面規劃](ui-plan.md)。
+
 ## 重現方式
 
 ```sh

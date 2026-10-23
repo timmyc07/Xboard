@@ -13,6 +13,15 @@ private final class ClipboardPanel: NSPanel {
 }
 
 enum ClipboardPanelPlacement {
+    static let preferredSize = NSSize(width: 520, height: 420)
+
+    static func size(in visibleFrame: NSRect, margin: CGFloat = 12) -> NSSize {
+        NSSize(
+            width: min(preferredSize.width, max(1, visibleFrame.width - margin * 2)),
+            height: min(preferredSize.height, max(1, visibleFrame.height - margin * 2))
+        )
+    }
+
     static func composerAnchor(in window: CGRect, bottomInset: CGFloat = 96) -> CGRect {
         let y = max(window.minY, window.maxY - max(bottomInset, 0))
         return CGRect(x: window.midX - 0.5, y: y, width: 1, height: 1)
@@ -43,7 +52,6 @@ enum ClipboardPanelPlacement {
 @MainActor
 final class ClipboardPanelController {
     private var panel: ClipboardPanel?
-    private let pickerSize = NSSize(width: 460, height: 326)
 
     func targetApplication(excluding processIdentifier: pid_t) -> NSRunningApplication? {
         if AXIsProcessTrusted(), let focusedApplication = focusedApplicationElement() {
@@ -103,7 +111,10 @@ final class ClipboardPanelController {
             )
         )
         panel.contentView?.appearance = appearance.nsAppearance
-        panel.setContentSize(pickerSize)
+        panel.setContentSize(
+            (anchor?.screen ?? NSScreen.main).map { ClipboardPanelPlacement.size(in: $0.visibleFrame) }
+                ?? ClipboardPanelPlacement.preferredSize
+        )
         positionPanel(panel, anchor: anchor)
         panel.orderFrontRegardless()
         NSApp.activate(ignoringOtherApps: true)
@@ -121,7 +132,7 @@ final class ClipboardPanelController {
 
     private func makePanel() -> ClipboardPanel {
         let panel = ClipboardPanel(
-            contentRect: NSRect(origin: .zero, size: pickerSize),
+            contentRect: NSRect(origin: .zero, size: ClipboardPanelPlacement.preferredSize),
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
@@ -145,7 +156,7 @@ final class ClipboardPanelController {
         let screen = anchor.screen
         let selection = anchor.rect
         let visibleFrame = screen.visibleFrame
-        let panelSize = pickerSize
+        let panelSize = panel.frame.size
         panel.setFrameOrigin(
             ClipboardPanelPlacement.origin(
                 anchor: selection,
@@ -512,45 +523,49 @@ struct ClipboardPanelView: View {
     @State private var sourceAppFilter: String?
     @State private var pinnedOnly = false
     @State private var hasOCR = false
-    @State private var isPresented = false
     @FocusState private var isSearchFocused: Bool
-
-    private let visibleListHeight: CGFloat = 186
 
     var body: some View {
         let allItems = store.items
         let items = allItems.filter {
             $0.matchesSearch(searchQuery) && $0.matches(historyFilter)
         }
-        let panelShape = RoundedRectangle(cornerRadius: 24, style: .continuous)
+        let panelShape = RoundedRectangle(cornerRadius: 18, style: .continuous)
 
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: "doc.on.clipboard.fill")
-                    .foregroundStyle(.cyan)
-                Text("Xboard")
-                    .font(.headline)
-                Spacer()
-                Text(searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                     ? "\(allItems.count)"
-                     : "\(items.count)/\(allItems.count)")
-                    .foregroundStyle(.secondary)
-                    .font(.caption)
-                closeButton
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(spacing: 10) {
+                HStack(spacing: 8) {
+                    Image(systemName: "doc.on.clipboard")
+                        .foregroundStyle(.tint)
+                        .accessibilityHidden(true)
+                    Text("Xboard")
+                        .font(.headline)
+                    Spacer()
+                    Text(searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && historyFilter.isDefault
+                         ? "\(allItems.count)"
+                         : "\(items.count)/\(allItems.count)")
+                        .foregroundStyle(.secondary)
+                        .font(.caption.monospacedDigit())
+                    closeButton
+                }
+                .frame(height: 28)
+
+                searchField
             }
+            .padding(12)
 
-            searchField
+            Divider()
 
             if items.isEmpty {
                 ContentUnavailableView(
-                    searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    allItems.isEmpty
                         ? String(localized: "Empty history")
                         : String(localized: "No matches"),
-                    systemImage: searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    systemImage: allItems.isEmpty
                         ? "doc.on.clipboard"
                         : "magnifyingglass"
                 )
-                    .frame(maxWidth: .infinity, minHeight: visibleListHeight)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollViewReader { scrollProxy in
                 List(items) { item in
@@ -582,15 +597,16 @@ struct ClipboardPanelView: View {
                             Button(String(localized: "Delete"), role: .destructive) { onDelete(item) }
                         }
                         .id(item.id)
+                        .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                         .contentShape(Rectangle())
                         .onTapGesture { onPaste(item, .original) }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
-                .frame(height: visibleListHeight)
+                .environment(\.defaultMinListRowHeight, 64)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .focusEffectDisabled()
                 .onMoveCommand { direction in moveSelection(direction) }
                 .onKeyPress(keys: [.upArrow, .downArrow], phases: [.down, .repeat]) { press in
@@ -617,13 +633,18 @@ struct ClipboardPanelView: View {
                 }
                 }
             }
-            HStack {
+
+            Divider()
+
+            HStack(spacing: 8) {
                 if AXIsProcessTrusted() {
                     Text(String(localized: "↑↓ Select · Return Paste · Esc Close"))
+                    Spacer(minLength: 0)
+                    Text("⌘1–9")
+                        .monospaced()
                 } else {
                     Text(String(localized: "Automatic paste needs Accessibility access."))
-                        .foregroundStyle(.orange)
-                    Spacer()
+                    Spacer(minLength: 0)
                     Button(String(localized: "Enable automatic paste…"), action: onEnableAutomaticPaste)
                         .buttonStyle(.link)
                         .help(String(localized: "Select an item, then press ⌘V in the destination app."))
@@ -631,24 +652,28 @@ struct ClipboardPanelView: View {
             }
                 .font(.caption2)
                 .foregroundStyle(.secondary)
-                .lineLimit(1)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
         }
-        .padding(16)
-        .frame(width: 460, height: 326, alignment: .top)
-        .clipShape(panelShape)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .clipboardGlassSurface(in: panelShape, material: material)
-        .opacity(isPresented ? 1 : 0)
-        .scaleEffect(isPresented ? 1 : 0.94, anchor: .bottom)
-        .offset(y: isPresented ? 0 : 26)
-        .clipboardGlassEntranceTransition(material: material)
+        .clipShape(panelShape)
+        .overlay {
+            panelShape.strokeBorder(Color(nsColor: .separatorColor), lineWidth: 0.5)
+                .allowsHitTesting(false)
+        }
+        .background {
+            ForEach(1...9, id: \.self) { number in
+                Button("") { pasteNumberedItem(number) }
+                    .keyboardShortcut(KeyEquivalent(Character(String(number))), modifiers: .command)
+                    .hidden()
+            }
+        }
         .onAppear {
             selectedID = items.first?.id
-            isPresented = false
             DispatchQueue.main.async {
                 isSearchFocused = true
-                withAnimation(.spring(response: 0.34, dampingFraction: 0.84)) {
-                    isPresented = true
-                }
             }
         }
         .onChange(of: searchQuery) { _, _ in
@@ -661,9 +686,6 @@ struct ClipboardPanelView: View {
             keepSelectionVisible(in: items)
         }
         .onExitCommand(perform: clearSearchOrClose)
-        .onKeyPress(characters: .decimalDigits, phases: [.down]) { press in
-            numberedShortcutResult(for: press)
-        }
     }
 
     private var searchField: some View {
@@ -693,9 +715,6 @@ struct ClipboardPanelView: View {
                     clearSearchOrClose()
                     return .handled
                 }
-                .onKeyPress(characters: .decimalDigits, phases: [.down]) { press in
-                    numberedShortcutResult(for: press)
-                }
 
             if !searchQuery.isEmpty {
                 Button {
@@ -712,11 +731,12 @@ struct ClipboardPanelView: View {
             filterMenu
         }
         .padding(.horizontal, 10)
-        .frame(height: 32)
-        .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .frame(height: 34)
+        .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(isSearchFocused ? Color.accentColor.opacity(0.65) : Color(nsColor: .separatorColor), lineWidth: 1)
+                .allowsHitTesting(false)
         }
         .accessibilityElement(children: .contain)
     }
@@ -801,26 +821,17 @@ struct ClipboardPanelView: View {
         hasOCR = false
     }
 
-    @ViewBuilder
     private var closeButton: some View {
-        if material == .liquidGlass, #available(macOS 26.0, *) {
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.caption.weight(.semibold))
-                    .frame(width: 28, height: 28)
-            }
-            .buttonStyle(.glass)
-            .accessibilityLabel(String(localized: "Close"))
-        } else {
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.caption.weight(.semibold))
-                    .frame(width: 28, height: 28)
-                    .background(Color.primary.opacity(0.08), in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(String(localized: "Close"))
+        Button(action: onClose) {
+            Image(systemName: "xmark")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .frame(width: 24, height: 24)
+                .background(.quaternary, in: Circle())
         }
+        .buttonStyle(.plain)
+        .help(String(localized: "Close"))
+        .accessibilityLabel(String(localized: "Close"))
     }
 
     private func moveSelection(_ direction: MoveCommandDirection) {
@@ -866,18 +877,13 @@ struct ClipboardPanelView: View {
         }
     }
 
-    private func numberedShortcutResult(for press: KeyPress) -> KeyPress.Result {
-        guard press.modifiers == .command,
-              let number = Int(press.characters),
-              (1...9).contains(number)
-        else { return .ignored }
-
-        let visibleItems = store.items.filter {
+    private func pasteNumberedItem(_ number: Int) {
+        // Native key equivalents can retain their action, so resolve the current results when invoked.
+        let items = store.items.filter {
             $0.matchesSearch(searchQuery) && $0.matches(historyFilter)
         }
-        guard visibleItems.indices.contains(number - 1) else { return .handled }
-        onPaste(visibleItems[number - 1], .original)
-        return .handled
+        guard items.indices.contains(number - 1) else { return }
+        onPaste(items[number - 1], .original)
     }
 }
 
@@ -898,26 +904,32 @@ private struct ClipboardRow: View {
             if let imageData = item.imageData, let nsImage = NSImage(data: imageData) {
                 Image(nsImage: nsImage)
                     .resizable()
-                    .scaledToFill()
-                    .frame(width: 48, height: 48)
+                    .scaledToFit()
+                    .padding(3)
+                    .frame(width: 44, height: 44)
+                    .background(Color(nsColor: .controlBackgroundColor))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .accessibilityHidden(true)
             } else {
                 Image(systemName: iconName)
                     .font(.title2)
-                    .frame(width: 48, height: 48)
+                    .frame(width: 44, height: 44)
                     .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
                     .foregroundStyle(.tint)
+                    .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.preview)
                     .lineLimit(2)
                     .font(.body)
+                    .foregroundStyle(.primary)
                 Text(metadataLabel)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
             SmartPasteMenu(
                 item: item,
                 onPaste: onPaste,
@@ -925,12 +937,11 @@ private struct ClipboardRow: View {
             )
             Button(action: onPreview) {
                 Image(systemName: "eye")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 14))
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(Color.primary.opacity(isHovered ? 0.95 : 0.72))
-                    .frame(width: 30, height: 30)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 26, height: 28)
                     .contentShape(Rectangle())
-                    .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
             }
             .buttonStyle(.plain)
             .help(String(localized: "Quick Look"))
@@ -938,12 +949,11 @@ private struct ClipboardRow: View {
             if item.isGIF {
                 Button(action: onSaveGIF) {
                     Image(systemName: "square.and.arrow.down")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 14))
                         .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(Color.primary.opacity(isHovered ? 0.95 : 0.72))
-                        .frame(width: 30, height: 30)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 26, height: 28)
                         .contentShape(Rectangle())
-                        .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
                 }
                 .buttonStyle(.plain)
                 .help(String(localized: "Save GIF"))
@@ -952,12 +962,11 @@ private struct ClipboardRow: View {
             if item.hasImage && !item.isGIF {
                 Button(action: onEdit) {
                     Image(systemName: "pencil")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 14))
                         .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(Color.primary.opacity(isHovered ? 0.95 : 0.72))
-                        .frame(width: 30, height: 30)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 26, height: 28)
                         .contentShape(Rectangle())
-                        .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
                 }
                 .buttonStyle(.plain)
                 .help(String(localized: "Edit image"))
@@ -965,30 +974,32 @@ private struct ClipboardRow: View {
             }
             Button(action: onTogglePin) {
                 Image(systemName: item.isPinned ? "pin.fill" : "pin")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 14))
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(item.isPinned ? Color.cyan : Color.primary.opacity(isHovered ? 0.95 : 0.72))
-                    .frame(width: 30, height: 30)
+                    .foregroundStyle(item.isPinned ? Color.accentColor : Color.secondary)
+                    .frame(width: 26, height: 28)
                     .contentShape(Rectangle())
-                    .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
             }
             .buttonStyle(.plain)
             .help(item.isPinned ? String(localized: "Unpin") : String(localized: "Pin"))
+            .accessibilityLabel(item.isPinned ? String(localized: "Unpin") : String(localized: "Pin"))
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, 10)
         .frame(height: 64)
-        .background(isSelected ? Color.accentColor.opacity(0.18) : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(isSelected ? Color.accentColor.opacity(0.14) : isHovered ? Color.primary.opacity(0.05) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(isSelected ? Color.accentColor : isHovered ? Color.primary.opacity(0.32) : .clear, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(isSelected ? Color.accentColor.opacity(0.7) : .clear, lineWidth: 1)
+                .allowsHitTesting(false)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .accessibilityAction(named: Text(String(localized: "Paste"))) { onPaste(item, .original) }
+        .accessibilityAction(named: Text(String(localized: "Quick Look")), onPreview)
+        .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .onHover { hovering in
-            withAnimation(.easeOut(duration: 0.12)) {
-                isHovered = hovering
-            }
+            isHovered = hovering
         }
     }
 
@@ -1031,14 +1042,15 @@ private struct SmartPasteMenu: View {
             }
         } label: {
             Image(systemName: "wand.and.stars")
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: 14))
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color.cyan)
-                .frame(width: 30, height: 30)
+                .foregroundStyle(.secondary)
+                .frame(width: 26, height: 28)
                 .contentShape(Rectangle())
-                .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
         }
         .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
         .buttonStyle(.plain)
         .accessibilityLabel(String(localized: "Smart Paste"))
         .help(String(localized: "Smart Paste"))

@@ -641,6 +641,23 @@ final class ClipboardTests: XCTestCase {
         XCTAssertTrue(recognized.localizedCaseInsensitiveContains("ocr"))
     }
 
+    func testLocalOCRRecognizesSVGTextOffMainThread() async throws {
+        let svgData = Data("""
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="180">
+          <rect width="900" height="180" fill="white"/>
+          <text x="30" y="110" font-family="Helvetica" font-size="48" font-weight="bold" fill="black">Clipboard OCR</text>
+        </svg>
+        """.utf8)
+
+        let recognizedText = await Task.detached(priority: .utility) {
+            LocalOCRService.recognize(imageData: svgData)
+        }.value
+        let recognized = try XCTUnwrap(recognizedText)
+
+        XCTAssertTrue(recognized.localizedCaseInsensitiveContains("clipboard"))
+        XCTAssertTrue(recognized.localizedCaseInsensitiveContains("ocr"))
+    }
+
     @MainActor
     func testStoreRemovesSingleItemAndPersistsDeletion() {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -824,6 +841,76 @@ final class ClipboardTests: XCTestCase {
     }
 
     @MainActor
+    func testPasteboardMonitorFallsBackFromInvalidImageRepresentation() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let pngData = try makePNGImageData()
+        pasteboard.setData(Data("invalid GIF".utf8), forType: NSPasteboard.PasteboardType("com.compuserve.gif"))
+        pasteboard.setData(pngData, forType: .png)
+        pasteboard.setString("image caption", forType: .string)
+
+        let snapshot = try XCTUnwrap(PasteboardMonitor().makeSnapshot(from: pasteboard))
+
+        XCTAssertEqual(snapshot.imageData, pngData)
+        XCTAssertEqual(snapshot.imageType, NSPasteboard.PasteboardType.png.rawValue)
+        XCTAssertEqual(snapshot.text, "image caption")
+    }
+
+    @MainActor
+    func testPasteboardMonitorRejectsInvalidImageWithoutLosingText() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let monitor = PasteboardMonitor()
+        pasteboard.setData(Data([0, 1, 2]), forType: .png)
+        XCTAssertNil(monitor.makeSnapshot(from: pasteboard))
+
+        pasteboard.setString("keep this text", forType: .string)
+        let snapshot = try XCTUnwrap(monitor.makeSnapshot(from: pasteboard))
+        XCTAssertEqual(snapshot.text, "keep this text")
+        XCTAssertNil(snapshot.imageData)
+        XCTAssertNil(snapshot.imageType)
+    }
+
+    @MainActor
+    func testPasteboardMonitorPreservesNativeWebPRepresentation() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let webPData = try XCTUnwrap(Data(base64Encoded: "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA"))
+        let webPType = NSPasteboard.PasteboardType("org.webmproject.webp")
+        pasteboard.setData(webPData, forType: webPType)
+
+        let snapshot = try XCTUnwrap(PasteboardMonitor().makeSnapshot(from: pasteboard))
+
+        XCTAssertEqual(snapshot.imageData, webPData)
+        XCTAssertEqual(snapshot.imageType, webPType.rawValue)
+    }
+
+    @MainActor
+    func testPasteboardMonitorKeepsGIFBytesAheadOfStaticRepresentation() throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let gifData = try XCTUnwrap(Data(base64Encoded: "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"))
+        let gifType = NSPasteboard.PasteboardType("com.compuserve.gif")
+        pasteboard.setData(try makePNGImageData(), forType: .png)
+        pasteboard.setData(gifData, forType: gifType)
+
+        let snapshot = try XCTUnwrap(PasteboardMonitor().makeSnapshot(from: pasteboard))
+
+        XCTAssertEqual(snapshot.imageData, gifData)
+        XCTAssertEqual(snapshot.imageType, gifType.rawValue)
+    }
+
+    private func makePNGImageData() throws -> Data {
+        let bitmap = try XCTUnwrap(NSBitmapImageRep(
+            bitmapDataPlanes: nil, pixelsWide: 1, pixelsHigh: 1, bitsPerSample: 8,
+            samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
+            bytesPerRow: 0, bitsPerPixel: 0
+        ))
+        bitmap.bitmapData?.initialize(repeating: 0xff, count: bitmap.bytesPerRow * bitmap.pixelsHigh)
+        return try XCTUnwrap(bitmap.representation(using: .png, properties: [:]))
+    }
+
+    @MainActor
     func testImagePayloadPersists() {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let store = ClipboardStore(directoryURL: directory, cipher: testCipher)
@@ -1002,5 +1089,36 @@ final class ClipboardTests: XCTestCase {
 
         XCTAssertEqual(origin.x, 12, accuracy: 0.001)
         XCTAssertEqual(origin.y, 39, accuracy: 0.001)
+    }
+
+    func testPanelSizeFitsSmallVisibleFrame() {
+        let visibleFrame = NSRect(x: -800, y: 120, width: 480, height: 360)
+        let size = ClipboardPanelPlacement.size(in: visibleFrame)
+        let origin = ClipboardPanelPlacement.origin(
+            anchor: NSRect(x: -325, y: 470, width: 1, height: 1),
+            panelSize: size,
+            visibleFrame: visibleFrame
+        )
+
+        XCTAssertEqual(size, NSSize(width: 456, height: 336))
+        XCTAssertTrue(visibleFrame.insetBy(dx: 12, dy: 12).contains(NSRect(origin: origin, size: size)))
+    }
+
+    func testPanelPlacementFitsDisplaysWithNegativeAndVerticalOrigins() {
+        for visibleFrame in [
+            NSRect(x: -1920, y: -300, width: 1920, height: 1080),
+            NSRect(x: 0, y: 1080, width: 1440, height: 900)
+        ] {
+            let size = ClipboardPanelPlacement.size(in: visibleFrame)
+            for corner in [visibleFrame.origin, NSPoint(x: visibleFrame.maxX, y: visibleFrame.maxY)] {
+                let origin = ClipboardPanelPlacement.origin(
+                    anchor: NSRect(origin: corner, size: NSSize(width: 1, height: 1)),
+                    panelSize: size,
+                    visibleFrame: visibleFrame
+                )
+                XCTAssertEqual(size, ClipboardPanelPlacement.preferredSize)
+                XCTAssertTrue(visibleFrame.insetBy(dx: 12, dy: 12).contains(NSRect(origin: origin, size: size)))
+            }
+        }
     }
 }

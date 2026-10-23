@@ -94,23 +94,20 @@ final class PasteboardMonitor {
 
         let text = pasteboard.string(forType: .string)
         let richTextData = pasteboard.data(forType: .rtf)
-        let imageType: NSPasteboard.PasteboardType?
-        let imageData: Data?
-        if let data = pasteboard.data(forType: NSPasteboard.PasteboardType(UTType.gif.identifier)) {
-            imageType = NSPasteboard.PasteboardType(UTType.gif.identifier)
+        let availableTypes = pasteboard.types ?? []
+        let gifType = NSPasteboard.PasteboardType(UTType.gif.identifier)
+        // Preserve declared order so synthesized TIFF does not replace the source format.
+        let imageTypes = availableTypes.filter { $0 == gifType }
+            + availableTypes.filter {
+                $0 != gifType && UTType($0.rawValue)?.conforms(to: .image) == true
+            }
+        var imageType: NSPasteboard.PasteboardType?
+        var imageData: Data?
+        for type in imageTypes {
+            guard let data = pasteboard.data(forType: type), NSImage(data: data)?.isValid == true else { continue }
+            imageType = type
             imageData = data
-        } else if let data = pasteboard.data(forType: .png) {
-            imageType = .png
-            imageData = data
-        } else if let data = pasteboard.data(forType: .tiff) {
-            imageType = .tiff
-            imageData = data
-        } else if let data = pasteboard.data(forType: NSPasteboard.PasteboardType("public.jpeg")) {
-            imageType = NSPasteboard.PasteboardType("public.jpeg")
-            imageData = data
-        } else {
-            imageType = nil
-            imageData = nil
+            break
         }
 
         let fileURLs = (pasteboard.readObjects(
