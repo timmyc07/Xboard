@@ -66,3 +66,11 @@
 | 對外發行 | 下一階段才申請／使用 Developer ID、公證、跨版本與 Intel 實機驗證；完成後才提供一般使用者下載 |
 
 目前沒有實作雲端同步、帳號、付費訂閱或自動更新服務。
+
+## 2026-10-23：點選貼上修復
+
+先搜尋 [Maccy 的 Clipboard.swift](https://github.com/p0deje/Maccy/blob/c700182f638d9d29bfa0aec9dc560422698854c6/Maccy/Clipboard.swift) 的貼上實作，沿用 Xboard 現有剪貼簿與 ⌘V 事件路徑，沒有移植其他儲存或事件框架。
+
+文件使用 Context7 `/websites/developer_apple_appkit`，未提供 macOS 14 版本索引；另以 Xcode 27.1／macOS SDK 27.0 的 AppKit headers 核對兩個方法均自 macOS 14 提供。Apple 的 [cooperative activation](https://developer.apple.com/documentation/appkit/passing-control-from-one-app-to-another-with-cooperative-activation)、[yieldActivation(to:)](https://developer.apple.com/documentation/appkit/nsapplication/yieldactivation(to:))、[activate(from:options:)](https://developer.apple.com/documentation/appkit/nsrunningapplication/activate(from:options:)) 明確說明啟用請求不保證立即成功。因此移除固定 120ms 的一次性判斷，先交出啟用權，再確認目的 App 已成為前景才送出貼上；切換其他 App、剪貼簿變更、失權、取消或超過 1.5 秒均停止。
+
+本機仍使用 ad-hoc 簽署，designated requirement 含執行檔 cdhash；程式碼更新後的舊系統權限可能不再符合。沒有加入放寬簽章身分、繞過 TCC 或代為授權的程式。

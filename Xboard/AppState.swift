@@ -246,6 +246,7 @@ final class AppState: ObservableObject {
     private var settingsWindow: NSWindow?
     private var favoritesWindow: NSWindow?
     private var targetApplication: NSRunningApplication?
+    private var pasteTask: Task<Void, Never>?
     private var recordingMonitor: Any?
     private var accessibilityTimer: Timer?
     private var hasStarted = false
@@ -364,6 +365,7 @@ final class AppState: ObservableObject {
     }
 
     func stop() {
+        pasteTask?.cancel()
         monitor.stop()
         hotKeyManager.stop()
         gifHotKeyManager.stop()
@@ -402,6 +404,8 @@ final class AppState: ObservableObject {
     }
 
     func showPanel() {
+        guard !panelController.isVisible else { return }
+        pasteTask?.cancel()
         quickLookPreview.close()
         let currentProcessIdentifier = NSRunningApplication.current.processIdentifier
         let resolvedTargetApplication = panelController.targetApplication(
@@ -532,6 +536,7 @@ final class AppState: ObservableObject {
     }
 
     func showFavorites() {
+        pasteTask?.cancel()
         panelController.close()
         let resolvedTargetApplication = panelController.targetApplication(
             excluding: NSRunningApplication.current.processIdentifier
@@ -628,6 +633,7 @@ final class AppState: ObservableObject {
     }
 
     func showSettings() {
+        pasteTask?.cancel()
         panelController.close()
         refreshAvailableApplications()
 
@@ -1118,6 +1124,7 @@ final class AppState: ObservableObject {
             return false
         }
 
+        pasteTask?.cancel()
         panelController.close()
         let pasteboard = NSPasteboard.general
         monitor.suppressCapture()
@@ -1135,23 +1142,65 @@ final class AppState: ObservableObject {
             statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
             return true
         }
-        destination.activate(options: [])
-        guard AXIsProcessTrusted() else {
+        isAccessibilityTrusted = AXIsProcessTrusted()
+        guard isAccessibilityTrusted else {
             statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
+            let alert = NSAlert()
+            alert.messageText = String(localized: "Automatic paste needs Accessibility access.")
+            alert.informativeText = String(localized: "The item is on the clipboard. Enable Xboard in Accessibility to paste automatically. If it is already enabled, turn its permission off and on, then reopen Xboard.")
+            alert.addButton(withTitle: String(localized: "Open System Settings"))
+            alert.addButton(withTitle: String(localized: "Cancel"))
+            NSApp.activate()
+            if alert.runModal() == .alertFirstButtonReturn {
+                openAccessibilitySettings()
+            } else {
+                NSApp.yieldActivation(to: destination)
+                _ = destination.activate(from: .current, options: [])
+            }
             return true
         }
 
-        let restoredChangeCount = pasteboard.changeCount
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-            guard NSWorkspace.shared.frontmostApplication?.processIdentifier == destination.processIdentifier,
-                  pasteboard.changeCount == restoredChangeCount else { return }
-            let source = CGEventSource(stateID: .privateState)
-            let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: true)
-            let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: false)
-            keyDown?.flags = .maskCommand
-            keyUp?.flags = .maskCommand
-            keyDown?.post(tap: .cghidEventTap)
-            keyUp?.post(tap: .cghidEventTap)
+        statusMessage = nil
+        let handoff = ClipboardPasteHandoff(
+            destinationPID: destination.processIdentifier,
+            sourcePID: NSRunningApplication.current.processIdentifier,
+            restoredChangeCount: pasteboard.changeCount,
+            deadline: Date().addingTimeInterval(1.5)
+        )
+        NSApp.yieldActivation(to: destination)
+        guard destination.activate(from: .current, options: []) else {
+            statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
+            return true
+        }
+        pasteTask = Task { [weak self] in
+            while !Task.isCancelled {
+                switch handoff.decision(
+                    frontmostPID: NSWorkspace.shared.frontmostApplication?.processIdentifier,
+                    changeCount: pasteboard.changeCount,
+                    isTrusted: AXIsProcessTrusted(),
+                    now: Date()
+                ) {
+                case .paste:
+                    let source = CGEventSource(stateID: .privateState)
+                    guard let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: true),
+                          let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: false)
+                    else {
+                        self?.statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
+                        return
+                    }
+                    keyDown.flags = .maskCommand
+                    keyUp.flags = .maskCommand
+                    keyDown.post(tap: .cghidEventTap)
+                    keyUp.post(tap: .cghidEventTap)
+                    return
+                case .cancel:
+                    self?.statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
+                    return
+                case .wait:
+                    do { try await Task.sleep(for: .milliseconds(20)) }
+                    catch { return }
+                }
+            }
         }
         return true
     }

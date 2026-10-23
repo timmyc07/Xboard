@@ -53,6 +53,8 @@ enum ClipboardPanelPlacement {
 final class ClipboardPanelController {
     private var panel: ClipboardPanel?
 
+    var isVisible: Bool { panel?.isVisible == true }
+
     func targetApplication(excluding processIdentifier: pid_t) -> NSRunningApplication? {
         if AXIsProcessTrusted(), let focusedApplication = focusedApplicationElement() {
             var focusedProcessIdentifier: pid_t = 0

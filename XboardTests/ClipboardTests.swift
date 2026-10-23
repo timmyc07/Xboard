@@ -782,6 +782,50 @@ final class ClipboardTests: XCTestCase {
         XCTAssertEqual(ClipboardMaterial.standard.title, String(localized: "Standard"))
     }
 
+    func testPasteHandoffWaitsForDestinationBeyondOriginalDelay() {
+        let start = Date(timeIntervalSinceReferenceDate: 1_000)
+        let handoff = ClipboardPasteHandoff(
+            destinationPID: 200, sourcePID: 100, restoredChangeCount: 5,
+            deadline: start.addingTimeInterval(1)
+        )
+
+        XCTAssertEqual(handoff.decision(frontmostPID: 100, changeCount: 5, isTrusted: true, now: start), .wait)
+        XCTAssertEqual(handoff.decision(frontmostPID: nil, changeCount: 5, isTrusted: true, now: start.addingTimeInterval(0.3)), .wait)
+        XCTAssertEqual(handoff.decision(frontmostPID: 200, changeCount: 5, isTrusted: true, now: start.addingTimeInterval(0.6)), .paste)
+    }
+
+    func testPasteHandoffCancelsWhenUserSwitchesToAnotherApp() {
+        let now = Date(timeIntervalSinceReferenceDate: 1_000)
+        let handoff = ClipboardPasteHandoff(
+            destinationPID: 200, sourcePID: 100, restoredChangeCount: 5,
+            deadline: now.addingTimeInterval(1)
+        )
+
+        XCTAssertEqual(handoff.decision(frontmostPID: 300, changeCount: 5, isTrusted: true, now: now), .cancel)
+    }
+
+    func testPasteHandoffCancelsChangedClipboardOrRevokedPermission() {
+        let now = Date(timeIntervalSinceReferenceDate: 1_000)
+        let handoff = ClipboardPasteHandoff(
+            destinationPID: 200, sourcePID: 100, restoredChangeCount: 5,
+            deadline: now.addingTimeInterval(1)
+        )
+
+        XCTAssertEqual(handoff.decision(frontmostPID: 200, changeCount: 6, isTrusted: true, now: now), .cancel)
+        XCTAssertEqual(handoff.decision(frontmostPID: 200, changeCount: 5, isTrusted: false, now: now), .cancel)
+    }
+
+    func testPasteHandoffCancelsAtDeadlineEvenIfDestinationIsReady() {
+        let deadline = Date(timeIntervalSinceReferenceDate: 1_000)
+        let handoff = ClipboardPasteHandoff(
+            destinationPID: 200, sourcePID: 100, restoredChangeCount: 5,
+            deadline: deadline
+        )
+
+        XCTAssertEqual(handoff.decision(frontmostPID: 200, changeCount: 5, isTrusted: true, now: deadline), .cancel)
+        XCTAssertEqual(handoff.decision(frontmostPID: nil, changeCount: 5, isTrusted: true, now: deadline.addingTimeInterval(0.1)), .cancel)
+    }
+
     func testSmartPastePlainTextDropsRichContent() throws {
         let item = ClipboardItem(
             fingerprint: "rich-text",

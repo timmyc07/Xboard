@@ -2510,6 +2510,16 @@
           }
         }
       }
+    },
+    "The item is on the clipboard. Enable Xboard in Accessibility to paste automatically. If it is already enabled, turn its permission off and on, then reopen Xboard.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目已放回剪貼簿。請在「輔助使用」中允許 Xboard 自動貼上。如果開關已開啟，請關閉再重新開啟該權限，然後重新開啟 Xboard。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -19,7 +19,7 @@ PasteboardMonitor reads changeCount on the common run loop and only captures cha
 
 ClipboardStore deduplicates captures and preserves pinned status and identity. Configured limits count only unpinned items; pins survive limit changes, capture, reload, and retention cleanup. Newest items appear first within each group. Data is encrypted atomically and existing files are preserved on decryption/key failures.
 
-ClipboardPanelController remembers the destination before opening the picker. Search and filtering update selection, the selected row is highlighted, and keyboard navigation scrolls into view. A selected item restores its original supported representations. AppState activates the remembered destination; synthetic paste occurs only if Accessibility is granted, focus still belongs to that destination, and the pasteboard has not changed. Otherwise the user can paste manually.
+ClipboardPanelController remembers the destination before opening the picker. Search and filtering update selection, the selected row is highlighted, and keyboard navigation scrolls into view. A selected item restores its original supported representations. AppState yields activation to the remembered destination and waits up to 1.5 seconds for it to become the foreground app. Synthetic paste occurs only if Accessibility is granted and the pasteboard has not changed. Opening another clipboard view, switching to a different app, changing the clipboard, permission loss, or timeout cancels the pending handoff. Repeatedly opening an already visible picker preserves that session's destination. Without Accessibility access, selecting an item restores it to the clipboard and shows a native permission explanation with a System Settings action.
 
 ## Settings and permissions
 

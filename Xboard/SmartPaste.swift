@@ -54,6 +54,26 @@ struct ClipboardPastePayload {
     let fileURLs: [URL]
 }
 
+struct ClipboardPasteHandoff {
+    enum Decision: Equatable {
+        case wait
+        case paste
+        case cancel
+    }
+
+    let destinationPID: pid_t
+    let sourcePID: pid_t
+    let restoredChangeCount: Int
+    let deadline: Date
+
+    func decision(frontmostPID: pid_t?, changeCount: Int, isTrusted: Bool, now: Date) -> Decision {
+        guard isTrusted, changeCount == restoredChangeCount, now < deadline else { return .cancel }
+        if frontmostPID == destinationPID { return .paste }
+        if let frontmostPID, frontmostPID != sourcePID { return .cancel }
+        return .wait
+    }
+}
+
 enum ClipboardPasteFormatter {
     static func payload(for item: ClipboardItem, format: ClipboardPasteFormat) -> ClipboardPastePayload? {
         switch format {

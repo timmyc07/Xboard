@@ -158,7 +158,9 @@ Yes. Xboard is free to use and MIT licensed, with no account, paid SDK, or serve
 
 Clipboard capture and sending ⌘V automatically require different permissions. Enable Xboard under Accessibility; the panel also provides a direct link. Without permission, selecting an item still restores it to the clipboard, so you can switch to the destination app and press ⌘V manually.
 
-Automatic paste and caret positioning also depend on the destination app's focus and Accessibility support.
+If Xboard is already enabled but the app still reports missing access after a local update, turn its Accessibility permission off and on, then relaunch Xboard. Local ad-hoc builds have a different signing identity after code changes.
+
+Automatic paste waits for the destination app to regain focus. It stops if you switch to another app or copy something else while the handoff is pending. Caret positioning also depends on the destination app's Accessibility support.
 
 </details>
 
