@@ -10,6 +10,50 @@ final class ClipboardTests: XCTestCase {
     }
 
     @MainActor
+    func testHistorySurvivesAppRelaunchButNotMacRestart() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let bootID = UUID()
+        let store = ClipboardStore(directoryURL: directory, cipher: testCipher, bootSessionID: bootID)
+        store.ingest(ClipboardSnapshot(text: "previous boot", richTextData: nil, imageData: nil, imageType: nil, fileURLs: []))
+        XCTAssertTrue(store.setPinned(try XCTUnwrap(store.items.first?.id), pinned: true))
+        XCTAssertNotNil(SnippetStore(directoryURL: directory, cipher: testCipher).add(text: "library entry"))
+
+        let relaunched = ClipboardStore(directoryURL: directory, cipher: testCipher, bootSessionID: bootID)
+        XCTAssertEqual(relaunched.items.first?.text, "previous boot")
+        XCTAssertEqual(relaunched.items.first?.isPinned, true)
+
+        let restarted = ClipboardStore(directoryURL: directory, cipher: testCipher, loadImmediately: false, bootSessionID: UUID())
+        XCTAssertTrue(restarted.prepareBootSession())
+        XCTAssertFalse(FileManager.default.fileExists(atPath: directory.appendingPathComponent("history.json").path))
+        restarted.load()
+        XCTAssertTrue(restarted.items.isEmpty)
+        XCTAssertEqual(SnippetStore(directoryURL: directory, cipher: testCipher).snippets.first?.text, "library entry")
+    }
+
+    @MainActor
+    func testHistoryByteLimitCountsPinsAndSkipsOversizedCopies() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = ClipboardStore(directoryURL: directory, cipher: testCipher, byteLimit: 700)
+        for (index, text) in ["older", "pinned", "newest", String(repeating: "x", count: 800)].enumerated() {
+            store.ingest(
+                ClipboardSnapshot(text: text, richTextData: nil, imageData: nil, imageType: nil, fileURLs: []),
+                now: Date(timeIntervalSince1970: TimeInterval(index))
+            )
+            if text == "pinned" {
+                let pin = try XCTUnwrap(store.items.first(where: { $0.text == text }))
+                XCTAssertTrue(store.setPinned(pin.id, pinned: true))
+            }
+        }
+        XCTAssertEqual(store.items.map(\.text), ["pinned", "newest"])
+        XCTAssertEqual(
+            ClipboardStore(directoryURL: directory, cipher: testCipher, byteLimit: 700).items.map(\.text),
+            ["pinned", "newest"]
+        )
+    }
+
+    @MainActor
     func testDeferredHistoryLoadMergesMemoryAndPreservesSavedPins() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
@@ -880,8 +924,11 @@ final class ClipboardTests: XCTestCase {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let store = ClipboardStore(directoryURL: directory, cipher: testCipher)
         store.ingest(ClipboardSnapshot(text: "keep", richTextData: nil, imageData: nil, imageType: nil, fileURLs: []))
-        store.clear()
-        XCTAssertTrue(store.items.isEmpty)
+        let deferred = ClipboardStore(directoryURL: directory, cipher: testCipher, loadImmediately: false)
+        XCTAssertTrue(deferred.clear())
+        XCTAssertFalse(FileManager.default.fileExists(atPath: directory.appendingPathComponent("history.json").path))
+        deferred.load()
+        XCTAssertTrue(deferred.items.isEmpty)
     }
 
     @MainActor

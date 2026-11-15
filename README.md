@@ -43,7 +43,7 @@ A draft you were writing, a link from your research, an image for your presentat
     </td>
     <td width="50%" valign="top">
       <h3>Keep everyday content close</h3>
-      <p>Pin as many items as you need. Pinned items stay outside history limits and retention cleanup, so common replies, code snippets, and work materials remain handy.</p>
+      <p>Pin items to keep them at the top of history. Pins are exempt from item count and age limits, count toward the shared data budget, and clear on restart.</p>
     </td>
   </tr>
   <tr>
@@ -167,7 +167,7 @@ Automatic paste waits for the destination app to regain focus. It stops if you s
 <details>
 <summary><strong>Can I change the shortcut and history limit?</strong></summary>
 
-Yes. The default shortcut is ⌥V, and the default limit is 200 unpinned items. You can enter any count of 10 or more. Pinned items do not count toward the limit. Large image histories use more memory and disk space, so choose a limit that suits your work.
+Yes. The default shortcut is ⌥V, and the default limit is 200 unpinned items. You can enter any count of 10 or more. Pinned items do not count toward the item limit. History has a separate 32 MiB clipboard data budget that includes pinned items. Xboard gives priority to pinned items and then recent items. Copies that exceed the budget remain available through the system clipboard.
 
 ⌥V replaces the special character normally entered by that key combination. Change it in Settings if it conflicts with your input method. Secure password fields may block this kind of shortcut.
 
@@ -176,7 +176,7 @@ Yes. The default shortcut is ⌥V, and the default limit is 200 unpinned items. 
 <details>
 <summary><strong>Where is my content stored? Does it sync between devices?</strong></summary>
 
-History and Library content are stored in `~/Library/Application Support/Xboard/` with AES-GCM encryption. The key stays in the local Keychain and does not sync through iCloud. Cross-device sync is not currently available. Deleting the Keychain key makes existing records unreadable.
+History and Library content are stored in `~/Library/Application Support/Xboard/` with AES-GCM encryption. Xboard deletes history from a previous boot when it next launches, including pinned items. To clear it during the current boot, choose **Clear history…** in the Xboard menu. The first launch after upgrading also clears old history saved without a boot marker. Library entries persist across restarts. The key stays in the local Keychain and does not sync through iCloud. Cross-device sync is not currently available. Deleting the Keychain key makes existing records unreadable.
 
 File records reference the originals. Moving or deleting those files, or losing access to them, may make the references unusable.
 

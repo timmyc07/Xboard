@@ -1,6 +1,66 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "Clear history…": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除剪貼簿紀錄…"
+          }
+        }
+      }
+    },
+    "This clears all Xboard history, including pinned items.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "這會清除 Xboard 的所有剪貼簿紀錄，包含釘選項目。"
+          }
+        }
+      }
+    },
+    "The saved clipboard history could not be deleted.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法刪除已儲存的剪貼簿紀錄。"
+          }
+        }
+      }
+    },
+    "The Mac’s startup session could not be identified. History stays in memory.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法識別這次 Mac 開機階段，剪貼簿紀錄只會保留在記憶體中。"
+          }
+        }
+      }
+    },
+    "Allow Xboard under System Settings → Privacy & Security → Clipboard to resume capture.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請前往「系統設定 → 隱私權與安全性 → 剪貼簿」允許 Xboard 存取，即可繼續記錄。"
+          }
+        }
+      }
+    },
+    "History clears after a Mac restart. The item count applies to unpinned items. The 32 MiB clipboard data limit includes pinned items.": {
+      "localizations": {
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac 重新開機後會清除剪貼簿紀錄。項目數量上限適用於未釘選項目，32 MiB 剪貼簿資料上限則包含釘選項目。"
+          }
+        }
+      }
+    },
     "Hotkeys": {
       "localizations": {
         "zh-Hant": {
@@ -77,16 +137,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "紀錄筆數"
-          }
-        }
-      }
-    },
-    "Choose any count of 10 or more. Pinned items do not count toward this limit. Large image histories use more memory and disk space.": {
-      "localizations": {
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "可自行設定 10 筆以上；釘選項目不計入上限。大量圖片紀錄會使用較多記憶體與磁碟空間。"
           }
         }
       }
@@ -437,16 +487,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "取消"
-          }
-        }
-      }
-    },
-    "Removes text, images, and references stored by the app.": {
-      "localizations": {
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "移除本程式儲存的文字、圖片與檔案參照。"
           }
         }
       }

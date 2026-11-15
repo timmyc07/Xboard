@@ -62,6 +62,13 @@ final class PasteboardMonitor {
         return true
     }
 
+    var isClipboardAccessDenied: Bool {
+        if #available(macOS 15.4, *) {
+            return NSPasteboard.general.accessBehavior == .alwaysDeny
+        }
+        return false
+    }
+
     private func poll() {
         refreshPauseState()
         let pasteboard = NSPasteboard.general
@@ -70,7 +77,7 @@ final class PasteboardMonitor {
         lastChangeCount = changeCount
 
         guard Date() >= suppressedUntil else { return }
-        guard !isPaused else { return }
+        guard !isPaused, !isClipboardAccessDenied else { return }
         let sourceApplication = sourceApplication(for: NSWorkspace.shared.frontmostApplication)
         guard !shouldIgnore(bundleIdentifier: sourceApplication?.bundleIdentifier) else { return }
         guard let snapshot = makeSnapshot(from: pasteboard) else { return }

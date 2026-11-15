@@ -223,6 +223,7 @@ final class AppState: ObservableObject {
     @Published private(set) var isCapturingScreenshot = false
     @Published private(set) var isRecordingGIF = false
     @Published var statusMessage: String?
+    @Published private(set) var isClipboardAccessDenied = false
     @Published private(set) var isLoadingStorage = false
 
     let store: ClipboardStore
@@ -337,6 +338,7 @@ final class AppState: ObservableObject {
         guard !hasStarted else { return }
         hasStarted = true
         retryStorageAccess()
+        isClipboardAccessDenied = monitor.isClipboardAccessDenied
         if !UserDefaults.standard.bool(forKey: "xboard.hasOpenedSettings") {
             UserDefaults.standard.set(true, forKey: "xboard.hasOpenedSettings")
             DispatchQueue.main.async { self.showSettings() }
@@ -358,8 +360,13 @@ final class AppState: ObservableObject {
         _ = stackNextHotKeyManager.register(stackNextHotKey)
         accessibilityTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.isAccessibilityTrusted = AXIsProcessTrusted()
-                self?.refreshPauseState()
+                guard let self else { return }
+                self.isAccessibilityTrusted = AXIsProcessTrusted()
+                let isDenied = self.monitor.isClipboardAccessDenied
+                if self.isClipboardAccessDenied != isDenied {
+                    self.isClipboardAccessDenied = isDenied
+                }
+                self.refreshPauseState()
             }
         }
     }
@@ -384,6 +391,7 @@ final class AppState: ObservableObject {
 
     func retryStorageAccess() {
         guard !isLoadingStorage else { return }
+        let historyAvailable = store.prepareBootSession()
         isLoadingStorage = true
         // Keychain authorization can wait for user interaction; keep it off the UI thread.
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
@@ -391,11 +399,11 @@ final class AppState: ObservableObject {
             DispatchQueue.main.async {
                 guard let self else { return }
                 if case .success = result {
-                    self.store.load()
+                    if historyAvailable { self.store.load() }
                     self.snippetStore.load()
                 } else {
                     let message = String(localized: "Keychain access was not granted. Saved data was preserved; new items stay in memory.")
-                    self.store.suspendPersistence(message: message)
+                    if historyAvailable { self.store.suspendPersistence(message: message) }
                     self.snippetStore.suspendPersistence(message: message)
                 }
                 self.isLoadingStorage = false
@@ -686,8 +694,25 @@ final class AppState: ObservableObject {
         window?.contentView?.needsDisplay = true
     }
 
-    func clearHistory() {
-        store.clear()
+    func confirmClearHistory() {
+        let alert = NSAlert()
+        alert.messageText = String(localized: "Clear history?")
+        alert.informativeText = String(localized: "This clears all Xboard history, including pinned items.")
+        alert.addButton(withTitle: String(localized: "Cancel"))
+        alert.addButton(withTitle: String(localized: "Clear")).hasDestructiveAction = true
+        NSApp.activate()
+        guard alert.runModal() == .alertSecondButtonReturn else { return }
+
+        guard store.clear() else {
+            statusMessage = store.persistenceErrorMessage
+            let error = NSAlert()
+            error.messageText = String(localized: "The saved clipboard history could not be deleted.")
+            error.runModal()
+            return
+        }
+        quickLookPreview.close()
+        clipboardStack.removeAll()
+        isCapturingStack = false
         statusMessage = String(localized: "History cleared.")
     }
 

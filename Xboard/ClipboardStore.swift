@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 import UniformTypeIdentifiers
 
@@ -7,7 +8,11 @@ final class ClipboardStore: ObservableObject {
     @Published private(set) var persistenceErrorMessage: String?
 
     private let fileManager = FileManager.default
+    nonisolated static let maximumHistoryBytes = 32 * 1024 * 1024
+
     private let historyURL: URL
+    private let bootSessionID: UUID?
+    private let byteLimit: Int
     private let cipher: LocalDataCipher
     private var canPersist = true
     private var hasLoaded = false
@@ -19,11 +24,15 @@ final class ClipboardStore: ObservableObject {
         limit: Int = 200,
         retention: ClipboardRetention = .never,
         cipher: LocalDataCipher = .keychainBacked,
-        loadImmediately: Bool = true
+        loadImmediately: Bool = true,
+        bootSessionID: UUID? = ClipboardStore.currentBootSessionID(),
+        byteLimit: Int = ClipboardStore.maximumHistoryBytes
     ) {
         let directory = directoryURL ?? fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("Xboard", isDirectory: true)
         historyURL = directory.appendingPathComponent("history.json")
+        self.bootSessionID = bootSessionID
+        self.byteLimit = byteLimit
         self.cipher = cipher
         self.limit = max(limit, 10)
         self.retention = retention
@@ -96,7 +105,7 @@ final class ClipboardStore: ObservableObject {
             isPinned: wasPinned,
             sourceApplication: sourceApplication ?? existingItem?.sourceApplication
         )
-        guard !item.isEmpty else { return }
+        guard !item.isEmpty, item.historyByteCount <= byteLimit else { return }
 
         items.removeAll { $0.fingerprint == item.fingerprint }
         items.insert(item, at: 0)
@@ -104,7 +113,7 @@ final class ClipboardStore: ObservableObject {
         sortItems()
         _ = trimToLimit()
         save()
-        scheduleOCRIfNeeded(for: item)
+        if items.contains(where: { $0.id == item.id }) { scheduleOCRIfNeeded(for: item) }
     }
 
     @discardableResult
@@ -112,15 +121,60 @@ final class ClipboardStore: ObservableObject {
         pruneExpired(now: now, persist: true)
     }
 
-    func clear() {
-        items.removeAll()
-        save()
+    @discardableResult
+    func clear() -> Bool {
+        do {
+            try removeHistoryFile()
+            items.removeAll()
+            hasLoaded = true
+            return true
+        } catch {
+            persistenceErrorMessage = String(localized: "The saved clipboard history could not be deleted.")
+            return false
+        }
+    }
+
+    nonisolated static func currentBootSessionID() -> UUID? {
+        var bytes = [CChar](repeating: 0, count: 37)
+        var size = bytes.count
+        guard sysctlbyname("kern.bootsessionuuid", &bytes, &size, nil, 0) == 0,
+              size == bytes.count, bytes.last == 0 else { return nil }
+        return UUID(uuidString: String(decoding: bytes.dropLast().map { UInt8(bitPattern: $0) }, as: UTF8.self))
+    }
+
+    private var bootMarkerURL: URL { historyURL.deletingPathExtension().appendingPathExtension("boot") }
+
+    private func removeHistoryFile() throws {
+        do {
+            try fileManager.removeItem(at: historyURL)
+        } catch let error as CocoaError where error.code == .fileNoSuchFile {
+            // An absent history file is already cleared.
+        }
+    }
+
+    @discardableResult
+    func prepareBootSession() -> Bool {
+        do {
+            let marker = try? String(contentsOf: bootMarkerURL, encoding: .utf8)
+            if bootSessionID == nil || marker != bootSessionID?.uuidString {
+                try removeHistoryFile()
+            }
+        } catch {
+            suspendPersistence(message: String(localized: "The saved clipboard history could not be deleted."))
+            return false
+        }
+        guard bootSessionID != nil else {
+            suspendPersistence(message: String(localized: "The Mac’s startup session could not be identified. History stays in memory."))
+            return false
+        }
+        return true
     }
 
     private func setOCRText(_ text: String, for id: UUID) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
         guard items[index].ocrText != text else { return }
         items[index].ocrText = text
+        _ = trimToLimit()
         save()
     }
 
@@ -141,6 +195,7 @@ final class ClipboardStore: ObservableObject {
     }
 
     func load() {
+        guard prepareBootSession() else { return }
         canPersist = true
         persistenceErrorMessage = nil
         if hasLoaded {
@@ -212,6 +267,13 @@ final class ClipboardStore: ObservableObject {
             unpinnedCount += 1
             return unpinnedCount > limit
         }
+        var remainingBytes = byteLimit
+        items.removeAll { item in
+            let bytes = item.historyByteCount
+            guard bytes <= remainingBytes else { return true }
+            remainingBytes -= bytes
+            return false
+        }
         return items.count != originalCount
     }
 
@@ -223,12 +285,15 @@ final class ClipboardStore: ObservableObject {
     }
 
     private func save() {
-        guard canPersist else { return }
+        guard canPersist, let bootSessionID else { return }
         do {
             let directory = historyURL.deletingLastPathComponent()
             try fileManager.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
             let plaintext = try JSONEncoder.clipboardEncoder.encode(items)
             let encryptedData = try cipher.seal(plaintext, purpose: "clipboard-history")
+            if (try? String(contentsOf: bootMarkerURL, encoding: .utf8)) != bootSessionID.uuidString {
+                try bootSessionID.uuidString.write(to: bootMarkerURL, atomically: true, encoding: .utf8)
+            }
             try encryptedData.write(to: historyURL, options: .atomic)
             try? fileManager.setAttributes([.posixPermissions: 0o600], ofItemAtPath: historyURL.path)
         } catch {

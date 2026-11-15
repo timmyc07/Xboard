@@ -29,7 +29,6 @@ private struct ClipboardGlassSurface<S: Shape>: ViewModifier {
 
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
-    @State private var showingClearConfirmation = false
     @State private var showingClearUnpinnedConfirmation = false
 
     var body: some View {
@@ -102,17 +101,24 @@ struct SettingsView: View {
                                     .frame(width: 85)
                                 .controlSize(.small)
                             }
-                            Text(String(localized: "Choose any count of 10 or more. Pinned items do not count toward this limit. Large image histories use more memory and disk space."))
+                            Text(String(localized: "History clears after a Mac restart. The item count applies to unpinned items. The 32 MiB clipboard data limit includes pinned items."))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 8)
+
+                            if appState.isClipboardAccessDenied {
+                                Label(String(localized: "Allow Xboard under System Settings → Privacy & Security → Clipboard to resume capture."), systemImage: "exclamationmark.triangle.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(.orange)
+                                    .padding(.top, 8)
+                            }
 
                             Divider()
                                 .padding(.vertical, 12)
 
                             HStack {
                                 Button(String(localized: "Clear history"), role: .destructive) {
-                                    showingClearConfirmation = true
+                                    appState.confirmClearHistory()
                                 }
                                 .buttonStyle(.bordered)
                                 .controlSize(.small)
@@ -352,12 +358,6 @@ struct SettingsView: View {
             .padding(22)
         }
         .frame(width: 520, height: 500)
-        .confirmationDialog(String(localized: "Clear history?"), isPresented: $showingClearConfirmation, titleVisibility: .visible) {
-            Button(String(localized: "Clear"), role: .destructive) { appState.clearHistory() }
-            Button(String(localized: "Cancel"), role: .cancel) {}
-        } message: {
-            Text(String(localized: "Removes text, images, and references stored by the app."))
-        }
         .confirmationDialog(String(localized: "Clear unpinned history?"), isPresented: $showingClearUnpinnedConfirmation, titleVisibility: .visible) {
             Button(String(localized: "Clear unpinned"), role: .destructive) { appState.clearUnpinnedHistory() }
             Button(String(localized: "Cancel"), role: .cancel) {}

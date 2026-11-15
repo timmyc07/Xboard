@@ -227,6 +227,12 @@ struct ClipboardItem: Codable, Equatable, Identifiable {
         case id, createdAt, fingerprint, text, richTextData, imageData, imageType, ocrText, files, isPinned, sourceApplication
     }
 
+    var historyByteCount: Int {
+        var bytes = 256 + (text?.utf8.count ?? 0) + (ocrText?.utf8.count ?? 0)
+        bytes += (richTextData?.count ?? 0) + (imageData?.count ?? 0)
+        return files.reduce(bytes) { $0 + $1.bookmarkData.count + $1.name.utf8.count + $1.path.utf8.count + 64 }
+    }
+
     var hasText: Bool { text?.isEmpty == false }
     var hasImage: Bool { imageData != nil }
     var isGIF: Bool { imageType == UTType.gif.identifier }

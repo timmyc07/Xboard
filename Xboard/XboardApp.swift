@@ -57,6 +57,7 @@ struct XboardApp: App {
             }
 
             Divider()
+            Button(String(localized: "Clear history…"), role: .destructive) { appState.confirmClearHistory() }
             Button(String(localized: "Settings…")) { appState.showSettings() }
             Button(String(localized: "Quit Xboard")) { NSApp.terminate(nil) }
         }
