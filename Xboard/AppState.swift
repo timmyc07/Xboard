@@ -218,7 +218,7 @@ final class AppState: ObservableObject {
         }
     }
 
-    @Published private(set) var isAccessibilityTrusted = AXIsProcessTrusted()
+    @Published private(set) var canPostPasteShortcut = CGPreflightPostEventAccess()
     @Published private(set) var isRecordingHotKey = false
     @Published private(set) var isCapturingScreenshot = false
     @Published private(set) var isRecordingGIF = false
@@ -361,7 +361,7 @@ final class AppState: ObservableObject {
         accessibilityTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                self.isAccessibilityTrusted = AXIsProcessTrusted()
+                self.canPostPasteShortcut = CGPreflightPostEventAccess()
                 let isDenied = self.monitor.isClipboardAccessDenied
                 if self.isClipboardAccessDenied != isDenied {
                     self.isClipboardAccessDenied = isDenied
@@ -446,7 +446,7 @@ final class AppState: ObservableObject {
             onSaveGIF: { [weak self] item in self?.saveGIF(item) },
             onSaveFavorite: { [weak self] item in self?.saveAsFavorite(item) },
             onDelete: { [weak self] item in self?.deleteItem(item) },
-            onEnableAutomaticPaste: { [weak self] in self?.openAccessibilitySettings() }
+            onEnableAutomaticPaste: { [weak self] in self?.requestAutomaticPasteAccess() }
         )
     }
 
@@ -832,7 +832,7 @@ final class AppState: ObservableObject {
 
         let currentProcessIdentifier = NSRunningApplication.current.processIdentifier
         targetApplication = panelController.targetApplication(excluding: currentProcessIdentifier) ?? targetApplication
-        let canPasteAutomatically = AXIsProcessTrusted() && targetApplication != nil
+        let canPasteAutomatically = CGPreflightPostEventAccess() && targetApplication != nil
         guard paste(item, targetApplicationOverride: targetApplication) else { return }
         _ = clipboardStack.removeFirst()
 
@@ -971,10 +971,10 @@ final class AppState: ObservableObject {
         }
     }
 
-    func openAccessibilitySettings() {
+    func requestAutomaticPasteAccess() {
         panelController.close()
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        _ = AXIsProcessTrustedWithOptions(options)
+        canPostPasteShortcut = CGRequestPostEventAccess()
+        guard !canPostPasteShortcut else { return }
         guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") else { return }
         NSWorkspace.shared.open(url)
     }
@@ -1167,17 +1167,17 @@ final class AppState: ObservableObject {
             statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
             return true
         }
-        isAccessibilityTrusted = AXIsProcessTrusted()
-        guard isAccessibilityTrusted else {
+        canPostPasteShortcut = CGPreflightPostEventAccess()
+        guard canPostPasteShortcut else {
             statusMessage = String(localized: "Item restored to the clipboard. Press ⌘V to paste.")
             let alert = NSAlert()
             alert.messageText = String(localized: "Automatic paste needs Accessibility access.")
-            alert.informativeText = String(localized: "The item is on the clipboard. Enable Xboard in Accessibility to paste automatically. If it is already enabled, turn its permission off and on, then reopen Xboard.")
+            alert.informativeText = String(localized: "The item is on the clipboard. In Privacy & Security, allow Xboard under Device Control and Data Access (Accessibility on older macOS). If Xboard is already enabled, remove it from the list and add the installed app again.")
             alert.addButton(withTitle: String(localized: "Open System Settings"))
             alert.addButton(withTitle: String(localized: "Cancel"))
             NSApp.activate()
             if alert.runModal() == .alertFirstButtonReturn {
-                openAccessibilitySettings()
+                requestAutomaticPasteAccess()
             } else {
                 NSApp.yieldActivation(to: destination)
                 _ = destination.activate(from: .current, options: [])
@@ -1202,7 +1202,7 @@ final class AppState: ObservableObject {
                 switch handoff.decision(
                     frontmostPID: NSWorkspace.shared.frontmostApplication?.processIdentifier,
                     changeCount: pasteboard.changeCount,
-                    isTrusted: AXIsProcessTrusted(),
+                    isTrusted: CGPreflightPostEventAccess(),
                     now: Date()
                 ) {
                 case .paste:

@@ -326,21 +326,21 @@ struct SettingsView: View {
                             HStack {
                                 Label(
                                     String(localized: "Accessibility"),
-                                    systemImage: appState.isAccessibilityTrusted
+                                    systemImage: appState.canPostPasteShortcut
                                         ? "checkmark.circle.fill"
                                         : "exclamationmark.triangle.fill"
                                 )
                                 Spacer()
-                                Text(appState.isAccessibilityTrusted ? String(localized: "Active") : String(localized: "Required"))
-                                    .foregroundStyle(appState.isAccessibilityTrusted ? .green : .orange)
+                                Text(appState.canPostPasteShortcut ? String(localized: "Active") : String(localized: "Required"))
+                                    .foregroundStyle(appState.canPostPasteShortcut ? .green : .orange)
                             }
 
-                            if !appState.isAccessibilityTrusted {
+                            if !appState.canPostPasteShortcut {
                                 Text(String(localized: "Grant access to paste into the previous app automatically. History and manual paste work without it."))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                 Button(String(localized: "Open System Settings")) {
-                                    appState.openAccessibilitySettings()
+                                    appState.requestAutomaticPasteAccess()
                                 }
                                 .buttonStyle(.bordered)
                                 .controlSize(.small)

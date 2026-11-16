@@ -2551,12 +2551,12 @@
         }
       }
     },
-    "The item is on the clipboard. Enable Xboard in Accessibility to paste automatically. If it is already enabled, turn its permission off and on, then reopen Xboard.": {
+    "The item is on the clipboard. In Privacy & Security, allow Xboard under Device Control and Data Access (Accessibility on older macOS). If Xboard is already enabled, remove it from the list and add the installed app again.": {
       "localizations": {
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "項目已放回剪貼簿。請在「輔助使用」中允許 Xboard 自動貼上。如果開關已開啟，請關閉再重新開啟該權限，然後重新開啟 Xboard。"
+            "value": "項目已放回剪貼簿。請在「隱私權與安全性 → 裝置控制和資料取用」（舊版 macOS 為「輔助使用」）中允許 Xboard。如果開關已開啟，請從列表移除 Xboard，再加入目前安裝的 App。"
           }
         }
       }

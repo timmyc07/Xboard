@@ -639,7 +639,7 @@ struct ClipboardPanelView: View {
             Divider()
 
             HStack(spacing: 8) {
-                if AXIsProcessTrusted() {
+                if CGPreflightPostEventAccess() {
                     Text(String(localized: "↑↓ Select · Return Paste · Esc Close"))
                     Spacer(minLength: 0)
                     Text("⌘1–9")

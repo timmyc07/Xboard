@@ -158,7 +158,7 @@ Yes. Xboard is free to use and MIT licensed, with no account, paid SDK, or serve
 
 Clipboard capture and sending ⌘V automatically require different permissions. Enable Xboard under Accessibility; the panel also provides a direct link. Without permission, selecting an item still restores it to the clipboard, so you can switch to the destination app and press ⌘V manually.
 
-If Xboard is already enabled but the app still reports missing access after a local update, turn its Accessibility permission off and on, then relaunch Xboard. Local ad-hoc builds have a different signing identity after code changes.
+On macOS 27, this permission is under **Privacy & Security → Device Control and Data Access**. If the switch is on but Xboard still reports missing access after a local update, remove Xboard from that list, add the installed app again, and relaunch it. A rebuilt app with an ad hoc signature can invalidate a previous grant.
 
 Automatic paste waits for the destination app to regain focus. It stops if you switch to another app or copy something else while the handoff is pending. Caret positioning also depends on the destination app's Accessibility support.
 
